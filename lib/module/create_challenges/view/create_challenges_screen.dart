@@ -273,7 +273,7 @@ class CreateChallenges extends StatelessWidget {
                     ),
                     SizedBox(height: 64.h,),
                     CustomElevatedButton(
-                      title: 'Create'.toUpperCase(), onPressed: () {
+                      title: 'Create'.toUpperCase(), onPressed: () {print(Storage().teamDocument);
                       controller.createChallenge(context);
 
                     },)

@@ -168,7 +168,7 @@ class CreateChallengeController extends GetxController{
 
   void createChallenge(BuildContext context)async{
     final Either<Failure, CreateChallengeModel> createChallenge =
-    await _challengeDataSource.createChallenge(titleController.text, refereeUser?.id.toString(), selectedValue?.id.toString(), startTime, endTime, distanceController.text, stepsNumController.text, selectedTeam?.firebaseDocument, lat, long,date);
+    await _challengeDataSource.createChallenge(titleController.text, refereeUser?.firebaseUid, selectedValue?.id.toString(), startTime, endTime, distanceController.text, stepsNumController.text, selectedTeam?.firebaseDocument, lat, long,date);
     createChallenge.fold((l) =>     errorToast(l.message), (r) {
       successToast(r.message??'');
       Get.find<IShowDialogHelper>().showDialog(
