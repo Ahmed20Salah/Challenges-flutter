@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:global_online/core/bindings/home_bindings.dart';
 import 'package:global_online/core/utils/services/storage.dart';
 
+import '../../../../core/bindings/challenges_bindings.dart';
 import '../../../../core/bindings/chat_bindings.dart';
 import '../../../../core/bindings/map_bindings.dart';
 import '../../../../core/bindings/my_team_bindings.dart';
@@ -196,7 +197,7 @@ class NavBarController extends GetxController with GetSingleTickerProviderStateM
           transition: Transition.leftToRight,
           transitionDuration: const Duration(milliseconds: 200),
           page: () => ChallengesScreen(),
-          // binding: MyContactBinding(),
+          binding: ChallengesBindings(),
         );
       case '/map':
         return GetPageRoute(

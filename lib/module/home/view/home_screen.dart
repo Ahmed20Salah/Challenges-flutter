@@ -33,7 +33,7 @@ class HomeScreen extends StatelessWidget {
 
               GestureDetector(
                 onTap: () {
-                  Get.to(ActivityRecognitionApp());
+                  Get.to(WalkingScreen());
                 },
                 child: Container(
 

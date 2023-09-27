@@ -3,6 +3,7 @@ import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:global_online/module/challenges/view/demo.dart';
 
 import 'core/bindings/main_bindings.dart';
 import 'core/resources/resource.dart';
@@ -35,7 +36,7 @@ class MyApp extends StatelessWidget {
             getPages: AppPages.pages,
             initialBinding: MainBindings(),
             initialRoute: AppRoutes.splash,
-
+          // home: WalkingScreen(),
           );
         }
         ),

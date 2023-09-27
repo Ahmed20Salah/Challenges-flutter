@@ -14,6 +14,7 @@ class AppRoutes {
   static const chat = '/chat';
   static const createMedia = '/create_media';
   static const editProfile = '/edit_profile';
+  static const challengeDetails = '/challenge_details';
 
   // static const
 }

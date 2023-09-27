@@ -15,6 +15,7 @@ class API {
   static const getUser = '/getUser';
   static const createTeam = '/createTeam';
   static const challengeData = '/challengeData';
+  static const challenges = '/challenges';
   static const newContact = '/newContact';
   static const allHealthyPlaces = '/allHealthyPlaces';
   static const allTeams = '/allTeams';

@@ -62,7 +62,7 @@ dependencies:
   geolocator: ^10.0.1
   grouped_list: ^5.1.2
   pedometer: ^4.0.1
-  activity_recognition_flutter: ^5.0.0
+#  activity_recognition_flutter: ^5.0.0
   dropdown_button2: ^2.3.9
   shimmer: ^3.0.0
   omni_datetime_picker: ^1.0.9
