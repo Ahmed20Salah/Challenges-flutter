@@ -9,6 +9,7 @@ import '../../module/auth/view/login_screen.dart';
 import '../../module/nav_bar/presentation/pages/nav_bar_screen.dart';
 import '../../module/profile/view/profile_screen.dart';
 import '../../module/splash/view/splash_screen.dart';
+import '../bindings/challenges_details_bindings.dart';
 import '../bindings/create_challenge_bindings.dart';
 import '../bindings/login_bindings.dart';
 import '../bindings/nav_bar_bindings.dart';
@@ -30,6 +31,6 @@ class AppPages {
     GetPage(name: AppRoutes.createChallenges, page:()=> CreateChallenges(),binding: CreateChallengeBinding()),
     GetPage(name: AppRoutes.teamDetails, page:()=> TeamDetailsScreen(),binding: TeamDetailsBinding()),
     GetPage(name: AppRoutes.profile, page:()=> ProfileScreen(),binding: ProfileBindings()),
-    GetPage(name: AppRoutes.challengeDetails, page:()=> ChallengesDetailsScreen(),),
+    GetPage(name: AppRoutes.challengeDetails, page:()=> ChallengesDetailsScreen(),binding: ChallengesDetailsBindings()),
   ];
 }

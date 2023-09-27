@@ -1,6 +1,4 @@
 PODS:
-  - activity_recognition_flutter (0.0.1):
-    - Flutter
   - connectivity_plus (0.0.1):
     - Flutter
     - ReachabilitySwift
@@ -89,7 +87,6 @@ PODS:
     - FMDB (>= 2.7.5)
 
 DEPENDENCIES:
-  - activity_recognition_flutter (from `.symlinks/plugins/activity_recognition_flutter/ios`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - desktop_webview_auth (from `.symlinks/plugins/desktop_webview_auth/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
@@ -121,8 +118,6 @@ SPEC REPOS:
     - ReachabilitySwift
 
 EXTERNAL SOURCES:
-  activity_recognition_flutter:
-    :path: ".symlinks/plugins/activity_recognition_flutter/ios"
   connectivity_plus:
     :path: ".symlinks/plugins/connectivity_plus/ios"
   desktop_webview_auth:
@@ -153,7 +148,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqflite/ios"
 
 SPEC CHECKSUMS:
-  activity_recognition_flutter: fd735b9927d94b9a7c1165cc9b2e430034d8e230
   connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
   desktop_webview_auth: d645139460ef203d50bd0cdb33356785dd939cce
   Firebase: 07150e75d142fb9399f6777fa56a187b17f833a0

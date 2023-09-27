@@ -123,7 +123,7 @@ class ChallengesController extends GetxController{
       case 'Football':
         return GestureDetector(
           onTap: (){
-            Get.toNamed(AppRoutes.challengeDetails);
+            Get.toNamed(AppRoutes.challengeDetails,arguments: userChallenges.id.toString());
           },
           child: Container(
             margin: EdgeInsets.only(top: 19.h),
