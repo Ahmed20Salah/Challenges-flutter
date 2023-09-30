@@ -65,59 +65,64 @@ class ChallengesController extends GetxController{
     if(userChallenges == null) return SizedBox();
     switch (userChallenges.category?.name){
       case 'Running':
-        return Container(
+        return GestureDetector(
+         onTap: (){
+           Get.toNamed(AppRoutes.challengeDetails,arguments: userChallenges.id.toString());
+         },
+          child: Container(
 
-          margin: EdgeInsets.only(top: 19.h),
-          decoration: ShapeDecoration(
-            gradient: LinearGradient(
-              begin: Alignment(-0.94, -0.33),
-              end: Alignment(0.94, 0.33),
-              colors: [Color(0xFFF99F1B), Color(0xFFFFD056), Color(
-                  0xFFF59C31), Color(0xFFF28621)],
+            margin: EdgeInsets.only(top: 19.h),
+            decoration: ShapeDecoration(
+              gradient: LinearGradient(
+                begin: Alignment(-0.94, -0.33),
+                end: Alignment(0.94, 0.33),
+                colors: [Color(0xFFF99F1B), Color(0xFFFFD056), Color(
+                    0xFFF59C31), Color(0xFFF28621)],
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
             ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-          ),
 
-          padding: EdgeInsets.symmetric(
-              horizontal: 25.w, vertical: 15.h),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  CircleAvatar(radius: 16,),
-                  SizedBox(width: 17.w,),
-                  Text('${userChallenges.title}',
-                    style: getBoldItalicStyle(color: ColorManager.white,
-                        fontSize: FontSize.s16.sp),)
-                ],
-              ),
-              SizedBox(height: AppSize.s8.h,),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text('${userChallenges.stepsNum}', style: getBlackItalicStyle(
-                      color: ColorManager.white, fontSize: 64.sp),),
-                  SizedBox(width: 21.w,),
-                  Text('step', style: getBlackItalicStyle(
-                      color: ColorManager.white, fontSize: 16.sp),),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('${DateFormat('h:mm a').format(DateTime.parse(userChallenges.startTime?? ''))}', style: getBlackItalicStyle(
-                      color: ColorManager.white, fontSize: 16.sp),),
-                  Text('-', style: getBlackItalicStyle(
-                      color: ColorManager.white, fontSize: 16.sp),),
-                  Text('${DateFormat('h:mm a').format(DateTime.parse(userChallenges.endTime?? ''))}', style: getBlackItalicStyle(
-                      color: ColorManager.white, fontSize: 16.sp),),
-                  Text('${DateFormat('dd MMM yyyy').format(DateTime.parse(userChallenges.startTime?? ''))}', style: getBlackItalicStyle(
-                      color: ColorManager.white, fontSize: 16.sp),),
-                ],
-              )
-            ],
+            padding: EdgeInsets.symmetric(
+                horizontal: 25.w, vertical: 15.h),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    CircleAvatar(radius: 16,),
+                    SizedBox(width: 17.w,),
+                    Text('${userChallenges.title}',
+                      style: getBoldItalicStyle(color: ColorManager.white,
+                          fontSize: FontSize.s16.sp),)
+                  ],
+                ),
+                SizedBox(height: AppSize.s8.h,),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text('${userChallenges.stepsNum}', style: getBlackItalicStyle(
+                        color: ColorManager.white, fontSize: 64.sp),),
+                    SizedBox(width: 21.w,),
+                    Text('step', style: getBlackItalicStyle(
+                        color: ColorManager.white, fontSize: 16.sp),),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('${DateFormat('h:mm a').format(DateTime.parse(userChallenges.startTime?? ''))}', style: getBlackItalicStyle(
+                        color: ColorManager.white, fontSize: 16.sp),),
+                    Text('-', style: getBlackItalicStyle(
+                        color: ColorManager.white, fontSize: 16.sp),),
+                    Text('${DateFormat('h:mm a').format(DateTime.parse(userChallenges.endTime?? ''))}', style: getBlackItalicStyle(
+                        color: ColorManager.white, fontSize: 16.sp),),
+                    Text('${DateFormat('dd MMM yyyy').format(DateTime.parse(userChallenges.startTime?? ''))}', style: getBlackItalicStyle(
+                        color: ColorManager.white, fontSize: 16.sp),),
+                  ],
+                )
+              ],
+            ),
           ),
         );
       case 'Football':

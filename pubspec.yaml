@@ -66,6 +66,7 @@ dependencies:
   dropdown_button2: ^2.3.9
   shimmer: ^3.0.0
   omni_datetime_picker: ^1.0.9
+  flutter_spinbox: ^0.13.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
