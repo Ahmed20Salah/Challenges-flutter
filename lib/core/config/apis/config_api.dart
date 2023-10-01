@@ -23,5 +23,6 @@ class API {
   static const AllUsers = '/AllUsers';
   static const createChallengeTeam = '/createChallengeTeam';
   static const challengeDetails = '/challengeDetails';
+  static const challengeResult = '/ChallengeResult';
   static String imageUrl(String path) => '$baseImageUrl$path';
 }

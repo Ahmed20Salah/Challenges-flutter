@@ -21,6 +21,7 @@ class Storage {
   static const _firebaseId = 'firebaseId';
   static const _email = 'email';
   static const _type = 'type';
+  static const _teamId = 'team_id';
   static const _teamDocument = 'teamDocument';
   static const _customerId = 'customerId';
   static const _notification = 'notification';
@@ -87,6 +88,8 @@ class Storage {
   String? get latitude => storage.read<String>(_latitude);
   set latitude(String? newValue) => storage.write(_latitude, newValue);
   String? get longitude => storage.read<String>(_longitude);
+  set teamId(String? newValue) => storage.write(_teamId, newValue);
+  String? get teamId => storage.read<String>(_teamId);
   set longitude(String? newValue) => storage.write(_longitude, newValue);
   set onBoardingVisible(bool newValue) => storage.write(_onBoardingVisible, newValue);
   List<dynamic>? get notification => storage.read<List<dynamic>>(_notification);

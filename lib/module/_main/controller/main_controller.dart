@@ -73,6 +73,7 @@ class MainController extends GetxController{
   , (r) {
           Storage().type= r.userData?.type;
           Storage().teamDocument= r.userData?.team?.firebaseDocument;
+          Storage().teamId= r.userData?.teamId.toString();
   });
 
   }

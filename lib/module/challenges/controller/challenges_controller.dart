@@ -150,67 +150,83 @@ class ChallengesController extends GetxController{
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      children: [
-                         CircleAvatar(
-                          radius: 54 / 2,
-                           foregroundImage: CachedNetworkImageProvider(userChallenges.team?.image != null  ?API.imageUrl(userChallenges.team?.image ??''):'https://cdn.logojoy.com/wp-content/uploads/2018/05/30161703/251.png'),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                           CircleAvatar(
+                            radius: 54 / 2,
+                             foregroundImage: CachedNetworkImageProvider(userChallenges.team?.image != null  ?API.imageUrl(userChallenges.team?.image ??''):'https://cdn.logojoy.com/wp-content/uploads/2018/05/30161703/251.png'),
 
-                         ),
-                        SizedBox(height: 15.h,),
-                        Text(userChallenges.team?.name??'',
-                          style: getBoldStyle(color: ColorManager.blackText,
-                              fontSize: 16.sp),
-                        ),
-                        SizedBox(height: 5.h,),
-                        Row(
-                          children: [
-                            SvgPicture.asset(ImageAssets.iconSpark,
-                              color: Color(0xffF99F1B),),
-                            SizedBox(width: AppSize.s8.w,),
-                            Text('2,345 xp', style: getRegularStyle(
-                                color: ColorManager.blackText),),
+                           ),
+                          SizedBox(height: 15.h,),
+                          Text(userChallenges.team?.name??'',
+                            style: getBoldStyle(color: ColorManager.blackText,
+                                fontSize: 16.sp),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 5.h,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(ImageAssets.iconSpark,
+                                color: Color(0xffF99F1B),),
+                              SizedBox(width: AppSize.s8.w,),
+                              Text('2,345 xp', style: getRegularStyle(
+                                  color: ColorManager.blackText),),
 
-                          ],
-                        )
-                      ],
+                            ],
+                          )
+                        ],
+                      ),
                     ),
-                    Column(
-                      children: [
-                        Text(DateFormat('HH:mm').format(DateTime.parse(userChallenges.startTime?? '')), style: getBoldStyle(
-                            color: ColorManager.blackText, fontSize: 16.sp),
-                        ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text(DateFormat('HH:mm').format(DateTime.parse(userChallenges.startTime?? '')), style: getBoldStyle(
+                              color: ColorManager.blackText, fontSize: 16.sp),
+                          ),
 
-                        Text('${(DateTime.parse(userChallenges.startTime?? '').difference(DateTime.now()).inHours / 24).toStringAsFixed(0)} days ', style: getMediumStyle(
-                            color: ColorManager.blackText, fontSize: 14.sp),
-                        ),
-                      ],
+                          Text('${(DateTime.parse(userChallenges.startTime?? '').difference(DateTime.now()).inHours / 24).toStringAsFixed(0)} days ', style: getMediumStyle(
+                              color: ColorManager.blackText, fontSize: 14.sp),
+                          ),
+                        ],
+                      ),
                     ),
-                    Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 54 / 2,
-                          foregroundImage: CachedNetworkImageProvider(userChallenges.opponent?.image != null  ?API.imageUrl(userChallenges.opponent?.image ??''):'https://cdn.logojoy.com/wp-content/uploads/2018/05/30161703/251.png'),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            radius: 54 / 2,
+                            foregroundImage: CachedNetworkImageProvider(userChallenges.opponent?.image != null  ?API.imageUrl(userChallenges.opponent?.image ??''):'https://cdn.logojoy.com/wp-content/uploads/2018/05/30161703/251.png'),
 
-                        ),
-                        SizedBox(height: 15.h,),
+                          ),
+                          SizedBox(height: 15.h,),
 
-                        Text(userChallenges.opponent?.name??'',
-                          style: getBoldStyle(color: ColorManager.blackText,
-                              fontSize: 16.sp),
-                        ),
-                        SizedBox(height: 5.h,),
-                        Row(
-                          children: [
-                            SvgPicture.asset(ImageAssets.iconSpark,
-                              color: Color(0xffF99F1B),),
-                            SizedBox(width: AppSize.s8.w,),
-                            Text('2,345 xp', style: getRegularStyle(
-                                color: ColorManager.blackText),),
+                          Text(userChallenges.opponent?.name??'',
+                            style: getBoldStyle(color: ColorManager.blackText,
+                                fontSize: 16.sp),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 5.h,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(ImageAssets.iconSpark,
+                                color: Color(0xffF99F1B),),
+                              SizedBox(width: AppSize.s8.w,),
+                              Text('2,345 xp', style: getRegularStyle(
+                                  color: ColorManager.blackText),),
 
-                          ],
-                        )
-                      ],
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                   ],
                 ),

@@ -4,6 +4,7 @@ import 'package:flutter_spinbox/flutter_spinbox.dart';
 import 'package:get/get.dart';
 import 'package:global_online/core/resources/resource.dart';
 import 'package:global_online/core/utils/constant.dart';
+import 'package:global_online/core/utils/services/storage.dart';
 import 'package:global_online/core/widgets/custom_elevated_button_widget.dart';
 import 'package:global_online/module/challenge_details/controller/challenge_details_controller.dart';
 import 'package:global_online/module/challenges/view/demo.dart';
@@ -102,87 +103,104 @@ class ChallengesDetailsScreen extends StatelessWidget {
                            ): Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Column(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 54 / 2,
-                                      foregroundImage: CachedNetworkImageProvider(
-                                          logic.rxChallengeDetailsModel.value.data?.team?.image != null
-                                              ? API.imageUrl(
-                                              logic.rxChallengeDetailsModel.value.data?.team?.image ?? '')
-                                              : 'https://cdn.logojoy.com/wp-content/uploads/2018/05/30161703/251.png'),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 54 / 2,
+                                        foregroundImage: CachedNetworkImageProvider(
+                                            logic.rxChallengeDetailsModel.value.data?.team?.image != null
+                                                ? API.imageUrl(
+                                                logic.rxChallengeDetailsModel.value.data?.team?.image ?? '')
+                                                : 'https://cdn.logojoy.com/wp-content/uploads/2018/05/30161703/251.png'),
 
-                                    ),
-                                    SizedBox(height: 15.h,),
-                                    Text(logic.rxChallengeDetailsModel.value.data?.team?.name ?? '',
-                                      style: getBoldStyle(
-                                          color: ColorManager.blackText,
-                                          fontSize: 16.sp),
-                                    ),
-                                    SizedBox(height: 5.h,),
-                                    Row(
-                                      children: [
-                                        SvgPicture.asset(ImageAssets.iconSpark,
-                                          color: Color(0xffF99F1B),),
-                                        SizedBox(width: AppSize.s8.w,),
-                                        Text('2,345 xp', style: getRegularStyle(
-                                            color: ColorManager.blackText),),
+                                      ),
+                                      SizedBox(height: 15.h,),
+                                      Text(logic.rxChallengeDetailsModel.value.data?.team?.name ?? '',
+                                        style: getBoldStyle(
+                                            color: ColorManager.blackText,
+                                            fontSize: 16.sp),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      SizedBox(height: 5.h,),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          SvgPicture.asset(ImageAssets.iconSpark,
+                                            color: Color(0xffF99F1B),),
+                                          SizedBox(width: AppSize.s8.w,),
+                                          Text('2,345 xp', style: getRegularStyle(
+                                              color: ColorManager.blackText),),
 
-                                      ],
-                                    )
-                                  ],
+                                        ],
+                                      )
+                                    ],
+                                  ),
                                 ),
-                                Column(
-                                  children: [
-                                    Text(DateFormat('HH:mm').format(
-                                        DateTime.parse(
-                                            logic.rxChallengeDetailsModel.value.data?.startTime ?? '')),
-                                      style: getBoldStyle(
-                                          color: ColorManager.blackText,
-                                          fontSize: 16.sp),
-                                    ),
+                                Expanded(
+                                  child: Column(
+                                    children: [
+                                      Text(DateFormat('HH:mm').format(
+                                          DateTime.parse(
+                                              logic.rxChallengeDetailsModel.value.data?.startTime ?? '')),
+                                        style: getBoldStyle(
+                                            color: ColorManager.blackText,
+                                            fontSize: 16.sp),
+                                      ),
 
-                                    Text('${(DateTime
-                                        .parse(logic.rxChallengeDetailsModel.value.data?.startTime ?? '')
-                                        .difference(DateTime.now())
-                                        .inHours / 24).toStringAsFixed(0)} days ',
-                                      style: getMediumStyle(
-                                          color: ColorManager.blackText,
-                                          fontSize: 14.sp),
-                                    ),
-                                  ],
+                                      Text('${(DateTime
+                                          .parse(logic.rxChallengeDetailsModel.value.data?.startTime ?? '')
+                                          .difference(DateTime.now())
+                                          .inHours / 24).toStringAsFixed(0)} days ',
+                                        style: getMediumStyle(
+                                            color: ColorManager.blackText,
+                                            fontSize: 14.sp),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                Column(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 54 / 2,
-                                      foregroundImage: CachedNetworkImageProvider(
-                                          logic.rxChallengeDetailsModel.value.data?.opponent?.image != null
-                                              ? API.imageUrl(
-                                              logic.rxChallengeDetailsModel.value.data?.opponent?.image ??
-                                                  '')
-                                              : 'https://cdn.logojoy.com/wp-content/uploads/2018/05/30161703/251.png'),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 54 / 2,
+                                        foregroundImage: CachedNetworkImageProvider(
+                                            logic.rxChallengeDetailsModel.value.data?.opponent?.image != null
+                                                ? API.imageUrl(
+                                                logic.rxChallengeDetailsModel.value.data?.opponent?.image ??
+                                                    '')
+                                                : 'https://cdn.logojoy.com/wp-content/uploads/2018/05/30161703/251.png'),
 
-                                    ),
-                                    SizedBox(height: 15.h,),
+                                      ),
+                                      SizedBox(height: 15.h,),
 
-                                    Text(logic.rxChallengeDetailsModel.value.data?.opponent?.name ?? '',
-                                      style: getBoldStyle(
-                                          color: ColorManager.blackText,
-                                          fontSize: 16.sp),
-                                    ),
-                                    SizedBox(height: 5.h,),
-                                    Row(
-                                      children: [
-                                        SvgPicture.asset(ImageAssets.iconSpark,
-                                          color: Color(0xffF99F1B),),
-                                        SizedBox(width: AppSize.s8.w,),
-                                        Text('2,345 xp', style: getRegularStyle(
-                                            color: ColorManager.blackText),),
+                                      Text(logic.rxChallengeDetailsModel.value.data?.opponent?.name ?? '',
+                                        style: getBoldStyle(
+                                            color: ColorManager.blackText,
+                                            fontSize: 16.sp),
+                                        textAlign: TextAlign.center,
 
-                                      ],
-                                    )
-                                  ],
+                                      ),
+                                      SizedBox(height: 5.h,),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          SvgPicture.asset(ImageAssets.iconSpark,
+                                            color: Color(0xffF99F1B),),
+                                          SizedBox(width: AppSize.s8.w,),
+                                          Text('2,345 xp', style: getRegularStyle(
+                                              color: ColorManager.blackText),),
+
+                                        ],
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
@@ -341,32 +359,33 @@ class ChallengesDetailsScreen extends StatelessWidget {
                       Flexible(
                         flex: 1,
                         child: SpinBox(
-                          min: 1,
+                          min: 0,
                           max: 50,
-                          value: 1,
+                          value: logic.footballResultData,
                          incrementIcon: Icon(Icons.keyboard_arrow_up),
+
                          decrementIcon: Icon(Icons.keyboard_arrow_down),
                          direction: Axis.vertical,
                           decoration: InputDecoration(
                             border: InputBorder.none
                           ),
-                          onChanged: (value) => print(value),
+                          onChanged: (value) => logic.resultDataMyTeam(value),
                         ),
                       ),
                       Flexible(child: Text(':',style: getRegularStyle(color: Color(0xff454545),fontSize: 18.sp),)),
                       Flexible(
                         flex: 1,
                         child: SpinBox(
-                          min: 1,
+                          min: 0,
                           max: 50,
-                          value: 1,
+                          value: logic.opponentResult,
                          incrementIcon: Icon(Icons.keyboard_arrow_up),
                          decrementIcon: Icon(Icons.keyboard_arrow_down),
                          direction: Axis.vertical,
                           decoration: InputDecoration(
                             border: InputBorder.none
                           ),
-                          onChanged: (value) => print(value),
+                          onChanged: (value) => logic.opponentResultTeam(value),
                         ),
                       ),
                       Flexible(child: Column(
@@ -394,7 +413,10 @@ class ChallengesDetailsScreen extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 19.h,),
-                  CustomElevatedButton(title: 'Select'.toUpperCase())
+                  CustomElevatedButton(title: 'Select'.toUpperCase(),onPressed: (){
+                    logic.resultChallenge(Storage().teamId??'', logic.rxChallengeDetailsModel.value.data?.id.toString()??'', logic.footballResultData.toString(), null, null, logic.opponentResult.toString());
+                    Get.close(0);
+                  },)
                 ],
               ),
             ),

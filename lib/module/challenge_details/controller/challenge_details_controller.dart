@@ -22,7 +22,8 @@ class ChallengeDetailsController extends GetxController{
   final Rx<ChallengeDetailsModel> rxChallengeDetailsModel = ChallengeDetailsModel().obs;
 
   void setRxChallengeDetailsModel(ChallengeDetailsModel value) => rxChallengeDetailsModel.value = value;
-
+  double footballResultData = 0;
+  double opponentResult = 0 ;
 
   @override
   void onInit() {
@@ -54,4 +55,30 @@ class ChallengeDetailsController extends GetxController{
   }
 
 
+  Future<void> resultChallenge(String teamId, String challengeId,String? footballResultData,String? userId,String? resultData,String? opponentResult) async{
+    final Either<Failure, String> resultChallenge =
+    await _detailsDataSource.resultChallenge(teamId, challengeId, footballResultData, userId, resultData, opponentResult);
+    resultChallenge.fold((l) {
+
+      log(l.message.toString());
+      log(l.code.toString());
+      errorToast(l.message);
+    }, (r) {
+     successToast(r);
+
+      // r.eventData?.sort((a, b) => DateTime.parse('${a.date} ${a.time} ')
+      //     .compareTo(DateTime.parse('${b.date} ${b.time} ')));
+      // setRxChallengeDetailsModel(r);
+      // setRxRequestStatus(RequestStatus.SUCESS);
+      update();
+    });
+  }
+ resultDataMyTeam(double value){
+   footballResultData = value;
+   update();
+  }
+  opponentResultTeam(double value){
+    opponentResult = value;
+    update();
+  }
 }
