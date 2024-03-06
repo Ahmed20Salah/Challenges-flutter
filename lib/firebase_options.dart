@@ -50,22 +50,21 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDjW5IplxJF3HlcgBD6VtTicwpt8sS5MMY',
-    appId: '1:240229471911:android:7d304f115727a3f992ed82',
-    messagingSenderId: '240229471911',
-    projectId: 'challenge-88',
-    databaseURL: 'https://challenge-88-default-rtdb.firebaseio.com',
-    storageBucket: 'challenge-88.appspot.com',
+    apiKey: 'AIzaSyAYQybYf6xtNaeQmPHoFR4zplQvvqSV650',
+    appId: '1:997451079886:android:898cbc92588b7a016fb09f',
+    messagingSenderId: '997451079886',
+    projectId: 'wiz-online-challenge',
+    databaseURL: 'https://wiz-online-challenge-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'wiz-online-challenge.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCigdTs7DHkIyT_REUU_MV-4yh8-bm8Xxc',
-    appId: '1:240229471911:ios:73c1441feb40927f92ed82',
-    messagingSenderId: '240229471911',
-    projectId: 'challenge-88',
-    databaseURL: 'https://challenge-88-default-rtdb.firebaseio.com',
-    storageBucket: 'challenge-88.appspot.com',
-    iosClientId: '240229471911-9m4sfsef1or4nilk05msgrjr2ctql5sm.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBUozF6BDlzaSKQfSejZn1u8vIz3VhtguI',
+    appId: '1:997451079886:ios:22839f38542382646fb09f',
+    messagingSenderId: '997451079886',
+    projectId: 'wiz-online-challenge',
+    databaseURL: 'https://wiz-online-challenge-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'wiz-online-challenge.appspot.com',
     iosBundleId: 'com.wiz.onlinechallange.globalOnline',
   );
 }

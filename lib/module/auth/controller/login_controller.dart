@@ -36,6 +36,7 @@ class LoginController extends GetxController{
 
   Future<void> login(
       String uid) async {
+    print(uid);
     final loginModel =
     await _authDataSource.login(uid);
     loginModel.fold((l) => errorToast(l.message), (r) async {

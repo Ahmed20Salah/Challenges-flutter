@@ -1,52 +1,27 @@
 {
   "project_info": {
-    "project_number": "240229471911",
-    "firebase_url": "https://challenge-88-default-rtdb.firebaseio.com",
-    "project_id": "challenge-88",
-    "storage_bucket": "challenge-88.appspot.com"
+    "project_number": "997451079886",
+    "firebase_url": "https://wiz-online-challenge-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "wiz-online-challenge",
+    "storage_bucket": "wiz-online-challenge.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:240229471911:android:7d304f115727a3f992ed82",
+        "mobilesdk_app_id": "1:997451079886:android:898cbc92588b7a016fb09f",
         "android_client_info": {
           "package_name": "com.wiz.onlinechallange.global_online"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "240229471911-l7a6ujh8co8vd86mh830d94h2oo05blc.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.wiz.onlinechallange.global_online",
-            "certificate_hash": "8b5034683f6351bd6ba2d38c74304a105e30c721"
-          }
-        },
-        {
-          "client_id": "240229471911-opruunq0vqlv4v3pji2f94nbv6dt0mm0.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDjW5IplxJF3HlcgBD6VtTicwpt8sS5MMY"
+          "current_key": "AIzaSyAYQybYf6xtNaeQmPHoFR4zplQvvqSV650"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "240229471911-opruunq0vqlv4v3pji2f94nbv6dt0mm0.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "240229471911-9m4sfsef1or4nilk05msgrjr2ctql5sm.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.wiz.onlinechallange.globalOnline"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

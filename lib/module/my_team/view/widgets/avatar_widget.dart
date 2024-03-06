@@ -39,7 +39,7 @@ class AvatarWidget extends StatelessWidget {
         for (var n = 0; n < 5; n++)
           CachedNetworkImageProvider(
             getAvatarUrl(n),
-            errorListener: () {},
+            errorListener: (error) {},
           )
       ],
       infoWidgetBuilder: (surplus) => _infoWidget(surplus, context),
