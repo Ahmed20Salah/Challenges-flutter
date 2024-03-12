@@ -30,6 +30,13 @@ class AuthDataSource implements IAuthDataSource {
   Future<Either<Failure, RegisterModel>> register(String name, String email,String password, String confirmPassword, String phone) async {
     bool isConnected = await _connectivityChecker.isConnected();
     if (isConnected) {
+      print({
+        'name':name,
+        'phone':phone,
+        'email':email,
+        'password':password,
+        'confirm_password':confirmPassword
+      });
       try {
         Response response = await _webServiceConnections.postRequest(
           path: API.register,

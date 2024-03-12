@@ -105,9 +105,10 @@ class CreateChallengeController extends GetxController{
       errorToast(l.message);
     }, (r) {
       List<TeamModel>?  items = r.data;
-      var itemAllProduct =
-      items?.firstWhere((element) => element.firebaseDocument == Storage().teamDocument);
-      items?.remove(itemAllProduct);
+      // var itemAllProduct =
+      // items?.firstWhere();
+      print('r.data' + r.data.toString());
+      items?.removeWhere((element) => element.firebaseDocument == Storage().teamDocument);
       // r.eventData?.sort((a, b) => DateTime.parse('${a.date} ${a.time} ')
       //     .compareTo(DateTime.parse('${b.date} ${b.time} ')));
 

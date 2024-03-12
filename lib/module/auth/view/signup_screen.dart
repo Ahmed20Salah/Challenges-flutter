@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:global_online/core/resources/resource.dart';
@@ -10,8 +9,9 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 import '../../../core/helpers/validator.dart';
 import '../../../core/widgets/custom_elevated_button_widget.dart';
 import '../../../core/widgets/custom_textField_with_label.dart';
+
 class SignUpScreen extends StatelessWidget {
-   SignUpScreen({super.key});
+  SignUpScreen({super.key});
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -32,7 +32,6 @@ class SignUpScreen extends StatelessWidget {
                   end: AppSize.s40.w,
                 ),
                 child: GetBuilder<SignUpController>(
-
                   builder: (logic) {
                     return Form(
                       key: _formKey,
@@ -40,42 +39,60 @@ class SignUpScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: 145,),
-                          Text(AppStrings.createAccount,
+                          SizedBox(
+                            height: 145,
+                          ),
+                          Text(
+                            AppStrings.createAccount,
                             style: getBlackItalicStyle(
                                 color: ColorManager.blackText,
-                                fontSize: FontSize.s30.sp
-                            ),
+                                fontSize: FontSize.s30.sp),
                           ),
-                          SizedBox(height: 14.h,),
-                          Text(AppStrings.loginDesc,
-                            style: getMediumStyle(color: ColorManager.greyText,
-                                fontSize: FontSize.s16.sp
-                            ),),
-                          SizedBox(height: 30.h,),
-                          CustomTextFieldWithLabel(label: 'User Name', hint: 'User Name',
-                          controller: logic.nameRegisterController,
+                          SizedBox(
+                            height: 14.h,
+                          ),
+                          Text(
+                            AppStrings.loginDesc,
+                            style: getMediumStyle(
+                                color: ColorManager.greyText,
+                                fontSize: FontSize.s16.sp),
+                          ),
+                          SizedBox(
+                            height: 30.h,
+                          ),
+                          CustomTextFieldWithLabel(
+                            label: 'User Name',
+                            hint: 'User Name',
+                            controller: logic.nameRegisterController,
                             validator: (p0) => Validator.validateName(p0!),
-
                           ),
-                          SizedBox(height: 24.h,),
-                          CustomTextFieldWithLabel(label: 'Email', hint: 'Email',
-                          controller: logic.emailRegisterController,
+                          SizedBox(
+                            height: 24.h,
                           ),
-                          SizedBox(height: 24.h,),
+                          CustomTextFieldWithLabel(
+                            label: 'Email',
+                            hint: 'Email',
+                            controller: logic.emailRegisterController,
+                            validator: (p0) =>
+                                Validator.validateEmail(p0 ?? ''),
+                          ),
+                          SizedBox(
+                            height: 24.h,
+                          ),
                           Text(
                             AppStrings.phoneNumber,
                             style: getRegularStyle(
-                                color: ColorManager.black, fontSize: FontSize.s14
-                                .sp),
+                                color: ColorManager.black,
+                                fontSize: FontSize.s14.sp),
                           ),
-                          SizedBox(height: 8.h,),
+                          SizedBox(
+                            height: 8.h,
+                          ),
                           IntlPhoneField(
-
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      AppSize.s10.r),
+                                  borderRadius:
+                                      BorderRadius.circular(AppSize.s10.r),
                                   borderSide: BorderSide.none),
                               filled: true,
                               contentPadding: EdgeInsets.only(
@@ -88,12 +105,12 @@ class SignUpScreen extends StatelessWidget {
                                   color: ColorManager.hintColor,
                                   fontSize: FontSize.s16.sp),
                               enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      AppSize.s10.r),
+                                  borderRadius:
+                                      BorderRadius.circular(AppSize.s10.r),
                                   borderSide: BorderSide.none),
                               focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      AppSize.s10.r),
+                                  borderRadius:
+                                      BorderRadius.circular(AppSize.s10.r),
                                   borderSide: BorderSide.none),
                               // suffix: suffix,
                               // suffixIcon: suffix,
@@ -106,14 +123,17 @@ class SignUpScreen extends StatelessWidget {
                             },
                             onChanged: (phone) {
                               print(phone.completeNumber);
-                              logic.numberRegisterController.text = phone.completeNumber;
+                              logic.numberRegisterController.text =
+                                  phone.completeNumber;
                             },
                           ),
-                          CustomTextFieldWithLabel(  label: AppStrings.password,
+                          CustomTextFieldWithLabel(
+                            label: AppStrings.password,
                             hint: AppStrings.passwordHint,
                             obscureText: logic.showPass,
                             controller: logic.passwordRegisterController,
-                            validator: (p0) => Validator.validatePassword(p0 ?? ''),
+                            validator: (p0) =>
+                                Validator.validatePassword(p0 ?? ''),
                             suffix: IconButton(
                               onPressed: () => logic.showPassword(),
                               icon: Icon(
@@ -125,13 +145,17 @@ class SignUpScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          SizedBox(height: 24.h,),
-                          CustomTextFieldWithLabel(       label: AppStrings.confirmPassword,
+                          SizedBox(
+                            height: 24.h,
+                          ),
+                          CustomTextFieldWithLabel(
+                            label: AppStrings.confirmPassword,
                             hint: AppStrings.repeatPassword,
                             obscureText: logic.showConfPass,
                             controller: logic.passwordConfirmRegisterController,
-                            validator: (p0) => Validator.validateConfirmPassword(
-                                p0 ?? '', logic.passwordRegisterController.text),
+                            validator: (p0) =>
+                                Validator.validateConfirmPassword(p0 ?? '',
+                                    logic.passwordRegisterController.text),
                             suffix: IconButton(
                               onPressed: () => logic.showConfPassword(),
                               icon: Icon(
@@ -141,43 +165,43 @@ class SignUpScreen extends StatelessWidget {
                                 size: AppSize.s20.h,
                                 color: ColorManager.black.withOpacity(0.6),
                               ),
-                            ),),
-                          SizedBox(height: 14.h,),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 14.h,
+                          ),
                           RichText(
                               textAlign: TextAlign.center,
                               text: TextSpan(children: [
                                 TextSpan(
                                     text: AppStrings.doHaveAcc,
                                     style: getRegularStyle(
-                                        color: ColorManager.black.withOpacity(0.7),
+                                        color:
+                                            ColorManager.black.withOpacity(0.7),
                                         fontSize: FontSize.s14.sp),
                                     children: [
                                       TextSpan(
                                         text: AppStrings.signIn.toUpperCase(),
-                                        recognizer:logic.signUpRecognizer,
+                                        recognizer: logic.signUpRecognizer,
                                         style: getExtraBoldItalicStyle(
                                             color: ColorManager.authText,
                                             fontSize: FontSize.s14.sp),
                                       )
                                     ]),
                               ])),
-                          SizedBox(height: 22.h,),
-                          CustomElevatedButton(title: 'Sign up'.toUpperCase(),
+                          SizedBox(
+                            height: 22.h,
+                          ),
+                          CustomElevatedButton(
+                            title: 'Sign up'.toUpperCase(),
                             titleFontStyle: getExtraBoldItalicStyle(
-                                color: ColorManager.white, fontSize: FontSize.s16
-                                .sp),
-                          
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              logic.register(
-                                  logic.nameRegisterController.text.trim(),
-                                  logic.passwordRegisterController.text.trim(),
-                                  logic.emailRegisterController.text.trim(),
-                                  logic.passwordConfirmRegisterController.text.trim(),
-                                  logic.numberRegisterController.text);
-                            }
-                          },
-                          
+                                color: ColorManager.white,
+                                fontSize: FontSize.s16.sp),
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                logic.verifyPhone(logic.numberRegisterController.text);
+                              }
+                            },
                           )
                         ],
                       ),
