@@ -70,46 +70,46 @@ class _NavBarScreenState extends State<NavBarScreen> {
               onGenerateRoute: controller.onGenerateRoute,
             ),
             //destination screen
-            floatingActionButton: controller.tabIndex.value == 2 ||
-                    controller.tabIndex.value == 4
-                ? GestureDetector(
-                    onTap: () {
-                      if (controller.tabIndex.value == 2) {
-                        Get.toNamed(AppRoutes.createChallenges);
-                      } else {
-                        Get.find<IShowBottomSheetHelper>()
-                            .showBottomSheet(ShowBottomSheetInput(
-                          const NewChatWidget(),
-                          isScrollControlled: true,
-                        ));
-                      }
-                    },
-                    child: Container(
-                      width: 48,
-                      height: 48,
-                      decoration: const ShapeDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment(-0.70, -0.72),
-                          end: Alignment(0.7, 0.72),
-                          colors: [Color(0xFFFFD056), Color(0xFFF59C31)],
+            floatingActionButton:
+                controller.tabIndex.value == 2 || controller.tabIndex.value == 4
+                    ? GestureDetector(
+                        onTap: () {
+                          if (controller.tabIndex.value == 2) {
+                            Get.toNamed(AppRoutes.createChallenges);
+                          } else {
+                            Get.find<IShowBottomSheetHelper>()
+                                .showBottomSheet(ShowBottomSheetInput(
+                              const NewChatWidget(),
+                              isScrollControlled: true,
+                            ));
+                          }
+                        },
+                        child: Container(
+                          width: 48,
+                          height: 48,
+                          decoration: const ShapeDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment(-0.70, -0.72),
+                              end: Alignment(0.7, 0.72),
+                              colors: [Color(0xFFFFD056), Color(0xFFF59C31)],
+                            ),
+                            shape: OvalBorder(),
+                            shadows: [
+                              BoxShadow(
+                                color: Color(0x44F99F1B),
+                                blurRadius: 14,
+                                offset: Offset(0, 4),
+                                spreadRadius: 0,
+                              )
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.add,
+                            color: Colors.white,
+                          ),
                         ),
-                        shape: OvalBorder(),
-                        shadows: [
-                          BoxShadow(
-                            color: Color(0x44F99F1B),
-                            blurRadius: 14,
-                            offset: Offset(0, 4),
-                            spreadRadius: 0,
-                          )
-                        ],
-                      ),
-                      child: Icon(
-                        Icons.add,
-                        color: Colors.white,
-                      ),
-                    ),
-                  )
-                : null,
+                      )
+                    : null,
             bottomNavigationBar:
                 (controller.zoomDrawerController.isOpen == true &&
                         controller.zoomDrawerController.isOpen != null)
@@ -118,7 +118,7 @@ class _NavBarScreenState extends State<NavBarScreen> {
                         currentIndex: controller.tabIndex.value,
                         margin: EdgeInsets.symmetric(horizontal: 16.w),
                         marginR: EdgeInsets.symmetric(horizontal: 20),
-                        paddingR: const EdgeInsets.only(bottom: 10, top: 10),
+                        paddingR: const EdgeInsets.only(bottom: 6, top: 6),
 
                         onTap: (index) {
                           // log(controller.tabIndex.value.toString());
@@ -152,8 +152,6 @@ class _NavBarScreenState extends State<NavBarScreen> {
         });
   }
 }
-
-
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({
@@ -216,7 +214,7 @@ class CustomDrawer extends StatelessWidget {
                         CustomIcon.home,
                         color: Colors.white,
                       ),
-                      horizontalTitleGap: 0,
+                      horizontalTitleGap: 10,
                       title: Text(
                         'Home',
                         style: getRegularStyle(
@@ -224,12 +222,12 @@ class CustomDrawer extends StatelessWidget {
                       ),
                     ),
                     ListTile(
-                      onTap: (){
+                      onTap: () {
                         logic.toggleDrawer();
                         Get.toNamed(AppRoutes.profile);
                       },
                       leading: SvgPicture.asset(ImageAssets.iconProfile),
-                      horizontalTitleGap: 0,
+                      horizontalTitleGap: 10,
                       title: Text(
                         'Profile',
                         style: getRegularStyle(
@@ -245,7 +243,7 @@ class CustomDrawer extends StatelessWidget {
                         CustomIcon.myTeam,
                         color: Colors.white,
                       ),
-                      horizontalTitleGap: 0,
+                      horizontalTitleGap: 10,
                       title: Text(
                         'My Teams',
                         style: getRegularStyle(
@@ -261,7 +259,7 @@ class CustomDrawer extends StatelessWidget {
                         CustomIcon.challenges,
                         color: Colors.white,
                       ),
-                      horizontalTitleGap: 0,
+                      horizontalTitleGap: 10,
                       title: Text(
                         'My Cahllenges',
                         style: getRegularStyle(
@@ -270,7 +268,7 @@ class CustomDrawer extends StatelessWidget {
                     ),
                     ListTile(
                       leading: SvgPicture.asset(ImageAssets.iconBlog),
-                      horizontalTitleGap: 0,
+                      horizontalTitleGap: 10,
                       title: Text(
                         'Blog',
                         style: getRegularStyle(
@@ -279,7 +277,7 @@ class CustomDrawer extends StatelessWidget {
                     ),
                     ListTile(
                       leading: SvgPicture.asset(ImageAssets.iconContactUs),
-                      horizontalTitleGap: 0,
+                      horizontalTitleGap: 10,
                       title: Text(
                         'Contact us',
                         style: getRegularStyle(
@@ -287,12 +285,12 @@ class CustomDrawer extends StatelessWidget {
                       ),
                     ),
                     ListTile(
-                      onTap: (){
+                      onTap: () {
                         Storage().erase();
                         Get.offAllNamed(AppRoutes.login);
                       },
                       leading: SvgPicture.asset(ImageAssets.iconLogout),
-                      horizontalTitleGap: 0,
+                      horizontalTitleGap: 10,
                       title: Text(
                         'Logout',
                         style: getRegularStyle(
