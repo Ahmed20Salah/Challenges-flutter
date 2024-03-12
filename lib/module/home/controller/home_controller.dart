@@ -16,6 +16,7 @@ import 'package:global_online/module/challenges/data/model/user_challenges_model
 import 'package:intl/intl.dart';
 
 import '../../../core/utils/error_toast.dart';
+import '../../../core/utils/services/storage.dart';
 import '../data/data_source/home_data_source.dart';
 
 class HomeController extends GetxController {
@@ -68,97 +69,135 @@ class HomeController extends GetxController {
 
   Widget getWidgetChallanges(UserChallenges? userchalleng) {
     switch (userchalleng?.category?.name) {
-      // case 'Running':
-      //   return GestureDetector(
-      //     onTap: () {
-      //       Get.toNamed(AppRoutes.challengeDetails,
-      //           arguments: userchalleng?.id.toString());
-      //     },
-      //     child: Container(
-      //       margin: EdgeInsets.only(top: 19.h),
-      //       decoration: ShapeDecoration(
-      //         gradient: LinearGradient(
-      //           begin: Alignment(-0.94, -0.33),
-      //           end: Alignment(0.94, 0.33),
-      //           colors: [
-      //             Color(0xFFF99F1B),
-      //             Color(0xFFFFD056),
-      //             Color(0xFFF59C31),
-      //             Color(0xFFF28621)
-      //           ],
-      //         ),
-      //         shape: RoundedRectangleBorder(
-      //           borderRadius: BorderRadius.circular(20),
-      //         ),
-      //       ),
-      //       padding: EdgeInsets.symmetric(horizontal: 25.w, vertical: 15.h),
-      //       child: Column(
-      //         children: [
-      //           Row(
-      //             children: [
-      //               CircleAvatar(
-      //                 radius: 16,
-      //               ),
-      //               SizedBox(
-      //                 width: 17.w,
-      //               ),
-      //               Text(
-      //                 '${userchalleng?.title}',
-      //                 style: getBoldItalicStyle(
-      //                     color: ColorManager.white, fontSize: FontSize.s16.sp),
-      //               )
-      //             ],
-      //           ),
-      //           SizedBox(
-      //             height: AppSize.s8.h,
-      //           ),
-      //           Row(
-      //             crossAxisAlignment: CrossAxisAlignment.center,
-      //             children: [
-      //               Text(
-      //                 '${userchalleng?.stepsNum}',
-      //                 style: getBlackItalicStyle(
-      //                     color: ColorManager.white, fontSize: 64.sp),
-      //               ),
-      //               SizedBox(
-      //                 width: 21.w,
-      //               ),
-      //               Text(
-      //                 'step',
-      //                 style: getBlackItalicStyle(
-      //                     color: ColorManager.white, fontSize: 16.sp),
-      //               ),
-      //             ],
-      //           ),
-      //           Row(
-      //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //             children: [
-      //               Text(
-      //                 '${DateFormat('h:mm a').format(DateTime.parse(userchalleng?.startTime ?? ''))}',
-      //                 style: getBlackItalicStyle(
-      //                     color: ColorManager.white, fontSize: 16.sp),
-      //               ),
-      //               Text(
-      //                 '-',
-      //                 style: getBlackItalicStyle(
-      //                     color: ColorManager.white, fontSize: 16.sp),
-      //               ),
-      //               Text(
-      //                 '${DateFormat('h:mm a').format(DateTime.parse(userchalleng?.endTime ?? ''))}',
-      //                 style: getBlackItalicStyle(
-      //                     color: ColorManager.white, fontSize: 16.sp),
-      //               ),
-      //               Text(
-      //                 '${DateFormat('dd MMM yyyy').format(DateTime.parse(userchalleng?.startTime ?? ''))}',
-      //                 style: getBlackItalicStyle(
-      //                     color: ColorManager.white, fontSize: 16.sp),
-      //               ),
-      //             ],
-      //           )
-      //         ],
-      //       ),
-      //     ),
-      //   );
+      case 'Running':
+        return GestureDetector(
+          onTap: () {
+            Get.toNamed(AppRoutes.challengeDetails,
+                arguments: userchalleng?.id.toString());
+          },
+          child: Container(
+            margin: EdgeInsets.only(top: 19.h),
+            decoration: ShapeDecoration(
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 25.w, vertical: 15.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${userchalleng?.title}',
+                  style: getBoldItalicStyle(
+                      color: ColorManager.blackText, fontSize: FontSize.s16.sp),
+                ),
+                SizedBox(
+                  height: AppSize.s10.h,
+                ),
+                Row(
+                  children: [
+                    Text(
+                      '${userchalleng?.stepsNum}',
+                      style: getBoldItalicStyle(
+                          color: ColorManager.blackText,
+                          fontSize: FontSize.s24.sp),
+                    ),
+                    Text(
+                      ' Steps',
+                      style: getBoldItalicStyle(
+                          color: ColorManager.blackText,
+                          fontSize: FontSize.s16.sp),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: AppSize.s8.h,
+                ),
+                ListTile(
+                  leading: Text(
+                    '01',
+                    style: getRegularStyle(
+                        color: ColorManager.blackText,
+                        fontSize: FontSize.s16.sp),
+                  ),
+                  horizontalTitleGap: 0,
+                  contentPadding: EdgeInsets.zero,
+                  title: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 16,
+                        foregroundImage: Storage().avatar != null
+                            ? CachedNetworkImageProvider(
+                                API.imageUrl(userchalleng!.image ?? ''))
+                            : null,
+                      ),
+                      SizedBox(
+                        width: AppSize.s12.w,
+                      ),
+                      Text(
+                        '${Storage().fistName}',
+                        style: getSemiBoldItalicStyle(
+                            color: ColorManager.blackText),
+                      )
+                    ],
+                  ),
+                  trailing: Text(
+                    '3:15 hours',
+                    style: getRegularStyle(color: const Color(0xffF99F1B)),
+                  ),
+                ),
+                const Divider(
+                  color: Color(0xffD1D7E4),
+                ),
+                Row(
+                  children: [
+                    Text(
+                      DateFormat('MMM dd yyyy')
+                          .format(DateTime.parse(userchalleng!.startTime!)),
+                      style: getRegularStyle(
+                        color: ColorManager.greyText,
+                        fontSize: 12,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      DateFormat('HH:mm aa')
+                          .format(DateTime.parse(userchalleng!.startTime!)),
+                      textAlign: TextAlign.center,
+                      style: getRegularStyle(
+                        color: ColorManager.greyText,
+                        fontSize: 12,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 9.w,
+                    ),
+                    Text(
+                      'To',
+                      style: getRegularStyle(
+                        color: ColorManager.greyText,
+                        fontSize: 12,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 9.w,
+                    ),
+                    Text(
+                      DateFormat('HH:mm aa')
+                          .format(DateTime.parse(userchalleng.endTime!)),
+                      style: getRegularStyle(
+                        color: ColorManager.greyText,
+                        fontSize: 12,
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+
       case 'Football':
         return Container(
           margin: EdgeInsets.only(top: 19.h),
