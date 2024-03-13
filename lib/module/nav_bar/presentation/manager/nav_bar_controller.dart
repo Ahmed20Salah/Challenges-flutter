@@ -3,6 +3,7 @@ import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get/get.dart';
 import 'package:global_online/core/bindings/home_bindings.dart';
 import 'package:global_online/core/utils/services/storage.dart';
+import 'package:global_online/module/chat/view/chat_list_screen.dart';
 
 import '../../../../core/bindings/challenges_bindings.dart';
 import '../../../../core/bindings/chat_bindings.dart';
@@ -213,9 +214,7 @@ class NavBarController extends GetxController with GetSingleTickerProviderStateM
           settings: settings,
           transition: Transition.leftToRight,
           transitionDuration: const Duration(milliseconds: 200),
-          page: () => Container(
-            color: Colors.teal,
-          ),
+          page: () => const ChatListScreen(),
           binding: ChatBindings()
         );
       // binding: CartBinding());

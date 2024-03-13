@@ -36,6 +36,10 @@ class ImageAssets {
   static const String forwardArrow = "$iconPath/forward_arrow.svg";
   static const String forwardVideo = "$iconPath/forward_video.svg";
   static const String playVideo = "$iconPath/play_video.svg";
+  static const String iconSend = "$iconPath/icon_send.svg";
+  static const String iconMore = "$iconPath/icon_more.svg";
+  static const String iconCup = "$iconPath/icon_cup.svg";
+  static const String iconNotification = "$iconPath/icon_notification.svg";
   static const String fireworks = "$imagePath/fireworks.png";
   static const String hotAirBallon = "$imagePath/hot air ballon.png";
   static const String balloons = "$imagePath/balloons.png";
@@ -47,5 +51,6 @@ class ImageAssets {
   static const String graduationTheme = "$imagePath/graduation_theme.png";
   static const String weddingTheme = "$imagePath/wedding_theme.png";
   static const String character = "$imagePath/character.png";
+  static const String profile = "$imagePath/profile_avatar.png";
   static const String loadingAnimate = "$jsonPath/loading.json";
 }

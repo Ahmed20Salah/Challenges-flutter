@@ -61,6 +61,14 @@ class _NavBarScreenState extends State<NavBarScreen> {
                   size: 20,
                 ),
               ),
+              actions: [
+                controller.tabIndex.value == 4
+                    ? IconButton(
+                        onPressed: (){},
+                        icon: SvgPicture.asset(ImageAssets.iconNotification),
+                      )
+                    : const SizedBox(),
+              ],
             ),
             extendBody: true,
             // backgroundColor: Colors.transparent,

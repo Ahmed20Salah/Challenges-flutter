@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:global_online/module/auth/view/signup_screen.dart';
 import 'package:global_online/module/challenge_details/view/challenge_details_screen.dart';
+import 'package:global_online/module/chat/view/chat_screen.dart';
 import 'package:global_online/module/create_challenges/view/create_challenges_screen.dart';
 import 'package:global_online/module/team_details/view/team_details_screen.dart';
 
@@ -24,13 +24,44 @@ class AppPages {
       name: AppRoutes.splash,
       page: () => const SplashScreen(),
     ),
-    GetPage(name: AppRoutes.login, page:()=> LoginScreen(),binding: LoginBindings()),
-    GetPage(name: AppRoutes.register, page:()=> SignUpScreen(),binding: SignUpBindings()),
-
-    GetPage(name: AppRoutes.navBar, page:()=> CustomDrawer(),binding: NavBarBindings()),
-    GetPage(name: AppRoutes.createChallenges, page:()=> CreateChallenges(),binding: CreateChallengeBinding()),
-    GetPage(name: AppRoutes.teamDetails, page:()=> TeamDetailsScreen(),binding: TeamDetailsBinding()),
-    GetPage(name: AppRoutes.profile, page:()=> ProfileScreen(),binding: ProfileBindings()),
-    GetPage(name: AppRoutes.challengeDetails, page:()=> ChallengesDetailsScreen(),binding: ChallengesDetailsBindings()),
+    GetPage(
+      name: AppRoutes.login,
+      page: () => LoginScreen(),
+      binding: LoginBindings(),
+    ),
+    GetPage(
+      name: AppRoutes.register,
+      page: () => SignUpScreen(),
+      binding: SignUpBindings(),
+    ),
+    GetPage(
+      name: AppRoutes.navBar,
+      page: () => const CustomDrawer(),
+      binding: NavBarBindings(),
+    ),
+    GetPage(
+      name: AppRoutes.createChallenges,
+      page: () => CreateChallenges(),
+      binding: CreateChallengeBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.teamDetails,
+      page: () => const TeamDetailsScreen(),
+      binding: TeamDetailsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.profile,
+      page: () => const ProfileScreen(),
+      binding: ProfileBindings(),
+    ),
+    GetPage(
+      name: AppRoutes.challengeDetails,
+      page: () => const ChallengesDetailsScreen(),
+      binding: ChallengesDetailsBindings(),
+    ),
+    GetPage(
+      name: AppRoutes.chat,
+      page: () =>  const ChatScreen(),
+    ),
   ];
 }

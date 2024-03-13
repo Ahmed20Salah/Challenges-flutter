@@ -11,6 +11,7 @@ class AppRoutes {
   static const typeWithTheme = '/type_with_theme';
   static const selectContactScreen = '/select_contact_screen';
   static const profile = '/profile';
+  static const chatList = '/chat_list';
   static const chat = '/chat';
   static const createMedia = '/create_media';
   static const editProfile = '/edit_profile';
