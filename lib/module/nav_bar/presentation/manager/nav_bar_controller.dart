@@ -1,33 +1,50 @@
+import 'dart:developer';
+
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get/get.dart';
 import 'package:global_online/core/bindings/home_bindings.dart';
+import 'package:global_online/core/netwrok/failure.dart';
 import 'package:global_online/core/utils/services/storage.dart';
+import 'package:global_online/module/chat/data/models/all_contact_model.dart';
 import 'package:global_online/module/chat/view/chat_list_screen.dart';
 
 import '../../../../core/bindings/challenges_bindings.dart';
 import '../../../../core/bindings/chat_bindings.dart';
 import '../../../../core/bindings/map_bindings.dart';
 import '../../../../core/bindings/my_team_bindings.dart';
+import '../../../../core/utils/constant.dart';
+import '../../../../core/utils/error_toast.dart';
 import '../../../challenges/view/challenges_screen.dart';
+import '../../../chat/data/data_source/chat_data_source.dart';
 import '../../../home/view/home_screen.dart';
 import '../../../map/view/map_screen.dart';
 import '../../../my_team/view/my_team_screen.dart';
 
-
-class NavBarController extends GetxController with GetSingleTickerProviderStateMixin {
+class NavBarController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   RxInt tabIndex = 0.obs;
   var isPressed = false.obs;
   // late Animation<double> borderRadiusAnimation;
   // late AnimationController borderRadiusAnimationController;
   // late CurvedAnimation borderRadiusCurve;
   final ZoomDrawerController zoomDrawerController = ZoomDrawerController();
+  final IChatDataSource _chatDataSource;
+  final Rx<RequestStatus> rxRequestStatus = RequestStatus.LOADING.obs;
+  void setRxRequestStatus(RequestStatus value) => rxRequestStatus.value = value;
+  final Rx<AllContactModel> rxEventDataModel = AllContactModel().obs;
 
+  void setRxEventDataModel(AllContactModel value) =>
+      rxEventDataModel.value = value;
+
+  NavBarController(this._chatDataSource);
   void toggleDrawer() {
     print("Toggle drawer");
     zoomDrawerController.toggle?.call();
     update(['ss']);
   }
+
   late AnimationController animationController;
   late Animation<double> animation;
   @override
@@ -41,6 +58,7 @@ class NavBarController extends GetxController with GetSingleTickerProviderStateM
     // TODO: implement onInit
     super.onInit();
     changePage(0);
+
     print('jwtToken ${Storage().jwtToken}');
     // borderRadiusAnimationController = AnimationController(
     //   duration: Duration(milliseconds: 500),
@@ -61,6 +79,7 @@ class NavBarController extends GetxController with GetSingleTickerProviderStateM
       });
 
     animationController.repeat();
+    getAllContact();
   }
 
   void changeTabIndex(int index) {
@@ -153,8 +172,8 @@ class NavBarController extends GetxController with GetSingleTickerProviderStateM
 //         throw Exception("Invalid index");
 //     }
 //   }
-  String getTitle(int index){
-    switch(index) {
+  String getTitle(int index) {
+    switch (index) {
       case 0:
         return 'Hey ${Storage().fistName} 👋';
       case 1:
@@ -165,11 +184,11 @@ class NavBarController extends GetxController with GetSingleTickerProviderStateM
         return 'Map';
       case 4:
         return 'Chats';
-      default :
+      default:
         return '';
     }
-
   }
+
   Route? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/home':
@@ -189,7 +208,7 @@ class NavBarController extends GetxController with GetSingleTickerProviderStateM
           settings: settings,
           transition: Transition.leftToRight,
           transitionDuration: const Duration(milliseconds: 200),
-          page: () =>MyTeamScreen(),
+          page: () => MyTeamScreen(),
           binding: MyTeamBindings(),
         );
       case '/challenges':
@@ -205,18 +224,15 @@ class NavBarController extends GetxController with GetSingleTickerProviderStateM
             settings: settings,
             transition: Transition.leftToRight,
             transitionDuration: const Duration(milliseconds: 200),
-          page: () =>MapScreen(),
-            binding: MapBindings()
-
-        );
+            page: () => MapScreen(),
+            binding: MapBindings());
       case '/chat':
         return GetPageRoute(
-          settings: settings,
-          transition: Transition.leftToRight,
-          transitionDuration: const Duration(milliseconds: 200),
-          page: () => const ChatListScreen(),
-          binding: ChatBindings()
-        );
+            settings: settings,
+            transition: Transition.leftToRight,
+            transitionDuration: const Duration(milliseconds: 200),
+            page: () => const ChatListScreen(),
+            binding: ChatBindings());
       // binding: CartBinding());
       default:
         return GetPageRoute(
@@ -235,4 +251,23 @@ class NavBarController extends GetxController with GetSingleTickerProviderStateM
     '/map',
     '/chat',
   ];
+
+  void getAllContact() async {
+    setRxRequestStatus(RequestStatus.LOADING);
+    final Either<Failure, AllContactModel> allContact =
+        await _chatDataSource.allContact();
+    allContact.fold((l) {
+      setRxRequestStatus(RequestStatus.ERROR);
+
+      log(l.message.toString());
+      log(l.code.toString());
+      errorToast(l.message);
+    }, (r) {
+      // r.eventData?.sort((a, b) => DateTime.parse('${a.date} ${a.time} ')
+      //     .compareTo(DateTime.parse('${b.date} ${b.time} ')));
+      setRxEventDataModel(r);
+      setRxRequestStatus(RequestStatus.SUCESS);
+      update();
+    });
+  }
 }

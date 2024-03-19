@@ -15,13 +15,13 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
 
-  if (Firebase.apps.isEmpty) {
+  // if (Firebase.apps.isEmpty) {
     Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-  } else {
-    Firebase.app(); // if already initialized, use that one
-  }
+  // } else {
+  //   Firebase.app(); // if already initialized, use that one
+  // }
 
   runApp(const MyApp());
 }

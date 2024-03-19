@@ -59,9 +59,9 @@ class AppPages {
       page: () => const ChallengesDetailsScreen(),
       binding: ChallengesDetailsBindings(),
     ),
-    GetPage(
-      name: AppRoutes.chat,
-      page: () =>  const ChatScreen(),
-    ),
+    // GetPage(
+    //   name: AppRoutes.chat,
+    //   page: () =>   ChatScreen(),
+    // ),
   ];
 }

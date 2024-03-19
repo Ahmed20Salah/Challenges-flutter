@@ -7,6 +7,7 @@ import 'package:global_online/core/helpers/show_bottom_sheet/show_bottom_sheet_i
 import 'package:global_online/core/resources/color_manager.dart';
 import 'package:global_online/core/resources/resource.dart';
 import 'package:global_online/core/routes/app_routes.dart';
+import 'package:global_online/core/utils/constant.dart';
 import 'package:global_online/core/utils/services/storage.dart';
 import 'package:global_online/module/home/view/home_screen.dart';
 
@@ -55,7 +56,7 @@ class _NavBarScreenState extends State<NavBarScreen> {
                 onPressed: () {
                   controller.toggleDrawer();
                 },
-                icon: Icon(
+                icon: const Icon(
                   CustomIcon.menu,
                   color: ColorManager.goodMorning,
                   size: 20,
@@ -64,7 +65,7 @@ class _NavBarScreenState extends State<NavBarScreen> {
               actions: [
                 controller.tabIndex.value == 4
                     ? IconButton(
-                        onPressed: (){},
+                        onPressed: () {},
                         icon: SvgPicture.asset(ImageAssets.iconNotification),
                       )
                     : const SizedBox(),
@@ -111,7 +112,7 @@ class _NavBarScreenState extends State<NavBarScreen> {
                               )
                             ],
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.add,
                             color: Colors.white,
                           ),
@@ -125,7 +126,7 @@ class _NavBarScreenState extends State<NavBarScreen> {
                     : DotNavigationBar(
                         currentIndex: controller.tabIndex.value,
                         margin: EdgeInsets.symmetric(horizontal: 16.w),
-                        marginR: EdgeInsets.symmetric(horizontal: 20),
+                        marginR: const EdgeInsets.symmetric(horizontal: 20),
                         paddingR: const EdgeInsets.only(bottom: 6, top: 6),
 
                         onTap: (index) {
@@ -135,25 +136,25 @@ class _NavBarScreenState extends State<NavBarScreen> {
                         // dotIndicatorColor: Colors.black,
                         items: [
                           DotNavigationBarItem(
-                              icon: Icon(CustomIcon.home),
-                              unselectedColor: Color(0xffD1D7E4),
-                              selectedColor: Color(0xff212121)),
+                              icon: const Icon(CustomIcon.home),
+                              unselectedColor: const Color(0xffD1D7E4),
+                              selectedColor: const Color(0xff212121)),
                           DotNavigationBarItem(
-                              icon: Icon(CustomIcon.myTeam),
-                              unselectedColor: Color(0xffD1D7E4),
-                              selectedColor: Color(0xff212121)),
+                              icon: const Icon(CustomIcon.myTeam),
+                              unselectedColor: const Color(0xffD1D7E4),
+                              selectedColor: const Color(0xff212121)),
                           DotNavigationBarItem(
-                              icon: Icon(CustomIcon.challenges),
-                              unselectedColor: Color(0xffD1D7E4),
-                              selectedColor: Color(0xff212121)),
+                              icon: const Icon(CustomIcon.challenges),
+                              unselectedColor: const Color(0xffD1D7E4),
+                              selectedColor: const Color(0xff212121)),
                           DotNavigationBarItem(
-                              icon: Icon(CustomIcon.map),
-                              unselectedColor: Color(0xffD1D7E4),
-                              selectedColor: Color(0xff212121)),
+                              icon: const Icon(CustomIcon.map),
+                              unselectedColor: const Color(0xffD1D7E4),
+                              selectedColor: const Color(0xff212121)),
                           DotNavigationBarItem(
-                              icon: Icon(CustomIcon.chat),
-                              unselectedColor: Color(0xffD1D7E4),
-                              selectedColor: Color(0xff212121)),
+                              icon: const Icon(CustomIcon.chat),
+                              unselectedColor: const Color(0xffD1D7E4),
+                              selectedColor: const Color(0xff212121)),
                         ],
                       ),
           );
@@ -175,13 +176,13 @@ class CustomDrawer extends StatelessWidget {
             controller: logic.zoomDrawerController,
             style: DrawerStyle.defaultStyle,
             menuScreen: Material(
-              color: Color(0xFF36256E),
+              color: const Color(0xFF36256E),
               child: Container(
                 padding: EdgeInsetsDirectional.only(start: 15.w, top: 10.h),
                 child: ListView(
                   children: [
                     ListTile(
-                      leading: CircleAvatar(
+                      leading: const CircleAvatar(
                         radius: 55 / 2,
                         foregroundImage:
                             AssetImage('assets/images/profile_avatar.png'),
@@ -198,7 +199,7 @@ class CustomDrawer extends StatelessWidget {
                         children: [
                           SvgPicture.asset(
                             ImageAssets.iconSpark,
-                            color: Color(0xffF99F1B),
+                            color: const Color(0xffF99F1B),
                           ),
                           SizedBox(
                             width: AppSize.s8.w,
@@ -210,7 +211,7 @@ class CustomDrawer extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 100,
                     ),
                     ListTile(
@@ -218,7 +219,7 @@ class CustomDrawer extends StatelessWidget {
                         logic.toggleDrawer();
                         logic.changePage(0);
                       },
-                      leading: Icon(
+                      leading: const Icon(
                         CustomIcon.home,
                         color: Colors.white,
                       ),
@@ -247,7 +248,7 @@ class CustomDrawer extends StatelessWidget {
                         logic.toggleDrawer();
                         logic.changePage(1);
                       },
-                      leading: Icon(
+                      leading: const Icon(
                         CustomIcon.myTeam,
                         color: Colors.white,
                       ),
@@ -263,7 +264,7 @@ class CustomDrawer extends StatelessWidget {
                         logic.toggleDrawer();
                         logic.changePage(2);
                       },
-                      leading: Icon(
+                      leading: const Icon(
                         CustomIcon.challenges,
                         color: Colors.white,
                       ),
@@ -309,7 +310,7 @@ class CustomDrawer extends StatelessWidget {
                 ),
               ),
             ),
-            menuBackgroundColor: Color(0xFF36256E),
+            menuBackgroundColor: const Color(0xFF36256E),
             shrinkMainScreen: false,
             mainScreen: NavBarScreen(),
             borderRadius: 24.0,
