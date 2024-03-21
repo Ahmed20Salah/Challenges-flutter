@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get/get.dart';
 import 'package:global_online/core/bindings/home_bindings.dart';
@@ -58,7 +59,8 @@ class NavBarController extends GetxController
     // TODO: implement onInit
     super.onInit();
     changePage(0);
-
+    FirebaseChatCore.instance
+        .setConfig(const FirebaseChatCoreConfig(null, 'Rooms', 'Users'));
     print('jwtToken ${Storage().jwtToken}');
     // borderRadiusAnimationController = AnimationController(
     //   duration: Duration(milliseconds: 500),
@@ -231,7 +233,7 @@ class NavBarController extends GetxController
             settings: settings,
             transition: Transition.leftToRight,
             transitionDuration: const Duration(milliseconds: 200),
-            page: () => const ChatListScreen(),
+            page: () => ChatListScreen(),
             binding: ChatBindings());
       // binding: CartBinding());
       default:

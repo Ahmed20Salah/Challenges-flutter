@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:get/get.dart';
 import 'package:global_online/core/utils/services/storage.dart';
@@ -12,6 +11,7 @@ import 'package:global_online/module/chat/data/data_source/chat_data_source.dart
 import 'package:global_online/module/chat/view/chat_screen.dart';
 
 import '../../../core/netwrok/failure.dart';
+import '../../../core/routes/app_routes.dart';
 import '../../../core/utils/constant.dart';
 import '../../../core/utils/error_toast.dart';
 import '../../../core/utils/image_picker/i_image_file.dart';
@@ -162,39 +162,44 @@ class ChatController extends GetxController {
 
     FirebaseChatCore.instance
         .setConfig(const FirebaseChatCoreConfig(null, 'Rooms', 'Users'));
-    await FirebaseChatCore.instance.createUserInFirestore(
-      types.User(
-        firstName: Storage().fistName!,
-        id: Storage().firebaseUID!, // UID from Firebase Authentication
-        lastName: Storage().lastName,
-      ),
-    );
+    // await FirebaseChatCore.instance.createUserInFirestore(
+    //   types.User(
+    //     firstName: Storage().fistName!,
+    //     id: Storage().firebaseUID!, // UID from Firebase Authentication
+    //     lastName: Storage().lastName,
+    //   ),
+    // );
     // print(await FirebaseChatCore.instance.users().first);
     // print(userData.firebaseUid);
     // final types.Room room = await FirebaseChatCore.instance.createRoom(
     //   types.User(
-    //     id: '9URhz8KAhKOXQF56YfPvG719MV63',
+    //     id: userData.firebaseUid!,
     //     firstName: userData.name,
     //   ),
     // );
-    Map<String, dynamic>? roomData;
-    FirebaseFirestore.instance
+    // Map<String, dynamic>? roomData;
+    bool isExisted = await FirebaseFirestore.instance
         .collection('/Rooms')
         .doc(roomId)
+        .collection('messages')
+        .limit(1)
         .get()
-        .then((value) => roomData = value.data());
-
-    // print(room);
-
+        .then((value) => value.size == 0);
+    Get.toNamed(AppRoutes.chat, arguments: {
+      'roomId': roomId,
+      'isNew': isExisted,
+      'userData': userData,
+    });
     // navigator.pop();
-    await navigator.push(
-      MaterialPageRoute(
-        builder: (context) => ChatScreen(
-          roomId: roomId,
-          room: roomData == null ? null : Room.fromJson(roomData!),
-        ),
-      ),
-    );
+    // await navigator.push(
+    //   MaterialPageRoute(
+    //     builder: (context) => ChatScreen(
+    //       roomId: roomId,
+    //       isNew: isExisted,
+    //       user: userData,
+    //     ),
+    //   ),
+    // );
   }
 
   void sendMessage(dynamic partialMessage, String roomId, bool? isPin) async {

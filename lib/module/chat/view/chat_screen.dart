@@ -5,7 +5,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:global_online/core/resources/resource.dart';
+import 'package:global_online/module/chat/data/models/all_contact_model.dart';
 import 'package:global_online/module/chat/data/models/message_model.dart';
 import 'package:global_online/module/chat/widgets/message_bubble.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
@@ -17,155 +20,65 @@ import '../../../core/utils/services/storage.dart';
 // import 'flutter';
 
 class ChatScreen extends StatefulWidget {
-  final Room? room;
-  final String roomId;
-  const ChatScreen({super.key, this.room, required this.roomId});
+  const ChatScreen({
+    super.key,
+  });
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  late bool _isNew;
   final TextEditingController _controller = TextEditingController();
+  late Room? room;
+  late String roomId;
+  late UserData? user;
 
-  final List<MessageModel> messages = [
-    MessageModel(
-      text: "Hello, how are you?",
-      sender: "Alice",
-      isSender: false,
-      timestamp: DateTime.now().subtract(const Duration(days: 2)),
-    ),
-    MessageModel(
-      text: "I'm fine, thank you!",
-      sender: "Bob",
-      isSender: true,
-      timestamp: DateTime.now().subtract(const Duration(days: 1, minutes: 5)),
-    ),
-    MessageModel(
-      text: "Glad to hear that. What's new?",
-      sender: "Alice",
-      isSender: false,
-      timestamp: DateTime.now().subtract(const Duration(days: 1)),
-    ),
-    MessageModel(
-      text:
-          "Not much, just working on Flutter projects. Not much, just working on Flutter projects. Not much, just working on Flutter projects.",
-      sender: "Bob",
-      isSender: true,
-      timestamp: DateTime.now().subtract(const Duration(minutes: 10)),
-    ),
-    MessageModel(
-      text: "That's awesome!",
-      sender: "Bob",
-      isSender: true,
-      timestamp: DateTime.now().subtract(const Duration(minutes: 5)),
-    ),
-    MessageModel(
-      text: "That's awesome!",
-      sender: "Bob",
-      isSender: true,
-      timestamp: DateTime.now().subtract(const Duration(minutes: 1)),
-    ),
-    MessageModel(
-      text: "That's awesome!",
-      sender: "Bob",
-      isSender: true,
-      timestamp: DateTime.now(),
-    ),
-    // Add more messages as needed
-  ];
-
-  void _sendMessage(PartialText partialText) async {
-    if (_controller.text.isNotEmpty) {
-      if (FirebaseAuth.instance.currentUser == null) return;
-      types.Message? message;
-
-      types.PartialText partialMessage =
-          types.PartialText(text: _controller.text);
-      message = types.TextMessage.fromPartial(
-          author: types.User(id: FirebaseAuth.instance.currentUser!.uid),
-          id: '',
-          partialText: partialMessage,
-          showStatus: true,
-          status: types.Status.sent);
-
-      // message = Message.fromJson({
-      //   'author':
-      //       types.User(id: FirebaseAuth.instance.currentUser!.uid).toJson(),
-      //   'id': '',
-      //   'showStatus': true,
-      //   'type': 'text',
-      //   'status': 'sent'
-      // });
-      // } else if (partialMessage is types.PartialFile) {
-      //   message = types.FileMessage.fromPartial(
-      //       author: types.User(id: FirebaseAuth.instance.currentUser!.uid),
-      //       id: '',
-      //       partialFile: partialMessage,
-      //       showStatus: true,
-      //       status: types.Status.sent);
-      // } else if (partialMessage is types.PartialImage) {
-      //   message = types.ImageMessage.fromPartial(
-      //       author: types.User(id: FirebaseAuth.instance.currentUser!.uid),
-      //       id: '',
-      //       remoteId: isPin != null ? 'Pin' : '',
-      //       partialImage: partialMessage,
-      //       showStatus: true,
-      //       status: types.Status.sent);
-      // } else if (partialMessage is types.PartialText) {
-      //   message = types.TextMessage.fromPartial(
-      //       author: types.User(id: FirebaseAuth.instance.currentUser!.uid),
-      //       id: '',
-      //       partialText: partialMessage,
-      //       showStatus: true,
-      //       status: types.Status.sent);
-      // }
-      print('room Collection' +
-          FirebaseChatCore.instance.config.roomsCollectionName);
-      // print(roomId);
-      if (message != null) {
-        final messageMap = message.toJson();
-        messageMap.removeWhere((key, value) => key == 'author' || key == 'id');
-        messageMap['authorId'] = FirebaseAuth.instance.currentUser!.uid;
-        messageMap['createdAt'] = FieldValue.serverTimestamp();
-        messageMap['updatedAt'] = FieldValue.serverTimestamp();
-        await FirebaseChatCore.instance
-            .getFirebaseFirestore()
-            .collection(
-                '${FirebaseChatCore.instance.config.roomsCollectionName}/${widget.roomId}/messages')
-            .add(messageMap);
-
-        // await FirebaseChatCore.instance
-        //     .getFirebaseFirestore()
-        //     .collection(FirebaseChatCore.instance.config.roomsCollectionName)
-        //     .doc(roomId)
-        //     .update({'updatedAt': FieldValue.serverTimestamp()});
-      }
-    }
-  }
-
-  void sendMessage(dynamic partialMessage, String roomId, bool? isPin) async {
+  void sendMessage(dynamic partialMessage, bool? isPin) async {
     if (FirebaseAuth.instance.currentUser == null) return;
 
     types.Message? message;
-
+    if (_isNew) {
+      FirebaseFirestore.instance.collection('Rooms').doc(roomId).set({
+        'updatedAt': FieldValue.serverTimestamp(),
+        'createdAt': FieldValue.serverTimestamp(),
+        "type": "direct",
+        "name": user!.name,
+        'imageUrl': user!.avatar,
+        "userIds": [roomId.split('_')[0], roomId.split('_')[1]]
+      });
+      _isNew = false;
+    }
     if (partialMessage is types.PartialCustom) {
       message = types.CustomMessage.fromPartial(
-          author: types.User(id: FirebaseAuth.instance.currentUser!.uid),
+          author: types.User(
+              id: FirebaseAuth.instance.currentUser!.uid,
+              firstName: Storage().fistName,
+              lastName: Storage().lastName,
+              imageUrl: Storage().avatar),
           id: '',
           partialCustom: partialMessage,
           showStatus: true,
           status: types.Status.sent);
     } else if (partialMessage is types.PartialFile) {
       message = types.FileMessage.fromPartial(
-          author: types.User(id: FirebaseAuth.instance.currentUser!.uid),
+          author: types.User(
+              id: FirebaseAuth.instance.currentUser!.uid,
+              firstName: Storage().fistName,
+              lastName: Storage().lastName,
+              imageUrl: Storage().avatar),
           id: '',
           partialFile: partialMessage,
           showStatus: true,
           status: types.Status.sent);
     } else if (partialMessage is types.PartialImage) {
       message = types.ImageMessage.fromPartial(
-          author: types.User(id: FirebaseAuth.instance.currentUser!.uid),
+          author: types.User(
+              id: FirebaseAuth.instance.currentUser!.uid,
+              firstName: Storage().fistName,
+              lastName: Storage().lastName,
+              imageUrl: Storage().avatar),
           id: '',
           remoteId: isPin != null ? 'Pin' : '',
           partialImage: partialMessage,
@@ -173,7 +86,11 @@ class _ChatScreenState extends State<ChatScreen> {
           status: types.Status.sent);
     } else if (partialMessage is types.PartialText) {
       message = types.TextMessage.fromPartial(
-          author: types.User(id: FirebaseAuth.instance.currentUser!.uid),
+          author: types.User(
+              id: FirebaseAuth.instance.currentUser!.uid,
+              firstName: Storage().fistName,
+              lastName: Storage().lastName,
+              imageUrl: Storage().avatar),
           id: '',
           partialText: partialMessage,
           showStatus: true,
@@ -181,7 +98,7 @@ class _ChatScreenState extends State<ChatScreen> {
     }
     if (message != null) {
       final messageMap = message.toJson();
-      messageMap.removeWhere((key, value) => key == 'author' || key == 'id');
+      messageMap.removeWhere((key, value) => key == 'id');
       messageMap['authorId'] = FirebaseAuth.instance.currentUser!.uid;
       messageMap['createdAt'] = FieldValue.serverTimestamp();
       messageMap['updatedAt'] = FieldValue.serverTimestamp();
@@ -201,7 +118,37 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void initState() {
+    _isNew = Get.arguments['isNew'] ?? false;
+    roomId = Get.arguments['roomId'];
+    user = Get.arguments['userData'];
+    getUsers();
     super.initState();
+  }
+
+  getUsers() async {
+    String userId = roomId.split('_')[0];
+    // Reference to the users collection
+    CollectionReference users = FirebaseFirestore.instance.collection('Users');
+
+    // Get the document snapshot for the user with the provided ID
+    DocumentSnapshot userData =
+        await users.doc('xXuUgGdkFpPkHeq6oH94KjjlKbS2').get();
+
+    // Check if the document exists
+    if (userData.exists) {
+      // Return the user data
+      print(userData.data() as Map<String, dynamic>);
+    } else {
+      // Document does not exist
+      print('User with ID ${'xXuUgGdkFpPkHeq6oH94KjjlKbS2'} does not exist.');
+      // return null;
+    }
+    // AggregateQuery usersData = await FirebaseFirestore.instance
+    //     .collection('Rooms')
+    //     .where('userIds', arrayContains: FirebaseAuth.instance.currentUser!.uid)
+    //     .count();
+
+    // print(usersData.query.parameters);
   }
 
   @override
@@ -219,16 +166,16 @@ class _ChatScreenState extends State<ChatScreen> {
         elevation: 0,
         title: Row(
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               radius: 21.0,
-              foregroundImage: AssetImage(ImageAssets.profile),
+              foregroundImage: AssetImage(user?.avatar ?? ImageAssets.profile),
             ),
             const SizedBox(width: 12.0),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Inter Rafah ⚽️',
+                  user?.name ?? "",
                   style: getBoldItalicStyle(
                     color: ColorManager.goodMorning,
                     fontSize: 16.sp,
@@ -274,7 +221,7 @@ class _ChatScreenState extends State<ChatScreen> {
           // StreamBuilder(
           //     stream: FirebaseFirestore.instance
           //         .collection('/Rooms')
-          //         .doc(widget.roomId)
+          //         .doc(roomId)
           //         .collection('messages')
           //         .snapshots(),
           //     builder: (context, snapshot) {
@@ -283,7 +230,7 @@ class _ChatScreenState extends State<ChatScreen> {
           //           child: Padding(
           //             padding: const EdgeInsets.all(16.0),
           //             child: ListView(
-          //               reverse: true,
+          //               // reverse: true,
           //               // itemCount: snapshot.data!.length,
           //               // itemBuilder: (context, index) {
           //               //   final actualIndex = index;
@@ -297,7 +244,7 @@ class _ChatScreenState extends State<ChatScreen> {
           //               children: snapshot.data!.docs
           //                   .map((e) => MessageBubble(
           //                         text: e['text'],
-          //                         isSender:  true,
+          //                         isSender: false,
           //                         // sameAsPreviousSender: sameAsPreviousSender,
           //                         timestamp: DateTime.now(),
           //                       ))
@@ -314,178 +261,211 @@ class _ChatScreenState extends State<ChatScreen> {
 
           //       return const SizedBox();
           //     }),
-          StreamBuilder<List<types.Message>>(
-            initialData: const <types.Message>[],
-            stream: FirebaseChatCore.instance.messages(
-                Room(id: widget.roomId, type: RoomType.direct, users: [])),
-            builder: (context, snapshot) {
-              return SizedBox(
-                height: 500,
-                width: double.infinity,
-                child: Chat(
-                  // audioMessageBuilder: (p0, {messageWidth}) {
-                  //   return Lottie.network('${p0}',
-                  //       animate: true, delegates: LottieDelegates());
-                  // },
 
-                  // isAttachmentUploading: _isAttachmentUploading,
-                  messages: snapshot.data ?? [],
-                  // onAttachmentPressed: _handleAtachmentPressed,
-                  // onMessageTap: _handleMessageTap,
+          Expanded(
+            child: StreamBuilder<List<types.Message>>(
+              initialData: const <types.Message>[],
+              stream: FirebaseChatCore.instance
+                  .messages(Room(id: roomId, type: RoomType.direct, users: [])),
+              builder: (context, snapshot) {
+                return SizedBox(
+                  width: double.infinity,
+                  child: Chat(
+                    // audioMessageBuilder: (p0, {messageWidth}) {
+                    //   return Lottie.network('${p0}',
+                    //       animate: true, delegates: LottieDelegates());
+                    // },
 
-                  showUserAvatars: true,
-                  onMessageVisibilityChanged: (p0, visible) {
-                    log('author ${visible.toString()}');
-                    log('author ${p0.author.id.toString()}');
-                    log('firebaseUID ${Storage().firebaseUID.toString()}');
-                    if (!visible) {
-                      final updatedMessage = p0.copyWith(
-                          author: p0.author,
-                          id: p0.id,
-                          showStatus: true,
-                          status: types.Status.seen);
-                      FirebaseChatCore.instance
-                          .updateMessage(updatedMessage, widget.roomId);
-                    }
-                  },
+                    // isAttachmentUploading: _isAttachmentUploading,
+                    messages: snapshot.data ?? [],
+                    // onAttachmentPressed: _handleAtachmentPressed,
+                    // onMessageTap: _handleMessageTap,
 
-                  // listBottomWidget: Container(
-                  //   color: Colors.redAccent,
-                  // ),
-                  // customBottomWidget: Container(
-                  //     // color: Colors.red,
-                  //     // height: 20,
-                  //     ),
-                  // theme: DefaultChatTheme(
-                  //     attachmentButtonIcon: recorder.isRecording
-                  //         ? StreamBuilder<RecordingDisposition>(
-                  //             stream: recorder.onProgress,
-                  //             builder: (context, snapshot) {
-                  //               final duration = snapshot.hasData
-                  //                   ? snapshot.data!.duration
-                  //                   : Duration.zero;
-                  //               String towDidits(int n) =>
-                  //                   n.toString().padLeft(0);
-                  //               final towDiditsMinutes =
-                  //                   towDidits(duration.inMinutes.remainder(60));
-                  //               final towDiditsSecond =
-                  //                   towDidits(duration.inSeconds.remainder(60));
-                  //               durationAudio = snapshot.data!.duration;
-                  //               if (duration.inMinutes == 1) {
-                  //                 stop();
-                  //                 setState(() {});
-                  //                 durationAudio = snapshot.data!.duration;
-                  //               }
+                    showUserAvatars: true,
+                    onMessageVisibilityChanged: (p0, visible) {
+                      log('author ${visible.toString()}');
+                      log('author ${p0.author.id.toString()}');
+                      log('firebaseUID ${Storage().firebaseUID.toString()}');
+                      bool theOtherUser = Storage().firebaseUID != p0.author.id;
+                      if (visible && theOtherUser) {
+                        Map<String, dynamic> jsonMessage = p0.toJson();
+                        jsonMessage['status'] = 'seen';
+                        final updatedMessage = p0.copyWith(
+                          status: types.Status.seen,
+                        );
+                        jsonMessage.removeWhere(
+                          (key, value) =>
+                              key == 'author' ||
+                              key == 'createdAt' ||
+                              key == 'id',
+                        );
+                        jsonMessage['authorId'] = p0.author.id;
+                        jsonMessage['updatedAt'] = FieldValue.serverTimestamp();
+                        FirebaseChatCore.instance
+                            .updateMessage(updatedMessage, roomId);
 
-                  //               return Text(
-                  //                 '$towDiditsMinutes:$towDiditsSecond',
-                  //                 style: TextStyle(
-                  //                   fontSize: 12.sp,
-                  //                   color: ColorManager.mainColor,
-                  //                 ),
-                  //               );
-                  //             },
-                  //           )
-                  //         : Container(
-                  //             height: 50,
-                  //             decoration: BoxDecoration(
-                  //                 gradient: LinearGradient(
-                  //                   colors: widget.color == null
-                  //                       ? [
-                  //                           ColorManager.mainColor,
-                  //                           ColorManager.gradiantSplash
-                  //                         ]
-                  //                       : widget.color!
-                  //                           .split(',')
-                  //                           .map((e) => HexColor.fromHex(e))
-                  //                           .toList(),
-                  //                   tileMode: TileMode.decal,
-                  //                   begin: Alignment.centerLeft,
-                  //                   end: Alignment.centerRight,
-                  //                 ),
-                  //                 shape: BoxShape.circle),
-                  //             child: Icon(
-                  //               Icons.add,
-                  //               color: Colors.white,
-                  //             ),
-                  //           ),
-                  //     inputContainerDecoration: BoxDecoration(
-                  //         color: Colors.white,
-                  //         borderRadius: BorderRadius.circular(20)),
-                  //     backgroundColor: Color(0xffF7F7F7),
-                  //     // attachmentButtonMargin: EdgeInsets.zero,
-                  //     inputTextColor: Colors.black,
-                  //     sendButtonMargin: EdgeInsets.zero,
-                  //     sendButtonIcon: SvgPicture.asset(ImageAssets.sendButton),
-                  //     inputTextDecoration: InputDecoration(
-                  //         hintText: 'Type Your massage',
-                  //         enabled: true,
-                  //         hintStyle: getBoldStyle(color: Color(0xff8D96A5)))),
-                  // l10n: ChatL10nEn(
-                  //   inputPlaceholder: 'Type Your massage',
-                  //   unreadMessagesLabel: "Unread messages",
-                  // ),
+                        FirebaseFirestore.instance
+                            .collection('Rooms')
+                            .doc(roomId)
+                            .collection('messages')
+                            .doc(p0.id)
+                            .update(jsonMessage);
+                      }
+                    },
 
-                  // customBottomWidget: InputCustomWidget(
-                  //     customWidget: IconButton(
-                  //       constraints: const BoxConstraints(
-                  //         minHeight: 24,
-                  //         minWidth: 24,
-                  //       ),
-                  //       icon: Icon(
-                  //         recorder.isRecording ? Icons.stop : Icons.mic,
-                  //         color: widget.color != null
-                  //             ? widget.color!
-                  //                 .split(',')
-                  //                 .map((e) => HexColor.fromHex(e))
-                  //                 .toList()
-                  //                 .first
-                  //             : ColorManager.mainColor,
-                  //       ),
-                  //       onPressed: () async {
-                  //         if (recorder.isRecording) {
-                  //           await stop();
-                  //         } else {
-                  //           await initRecorder();
-                  //         }
-                  //         setState(() {});
-                  //       },
-                  //       splashRadius: 24,
-                  //     ),
-                  //     options: InputOptions(
-                  //         enableSuggestions: true,
-                  //         sendButtonVisibilityMode:
-                  //             SendButtonVisibilityMode.editing),
-                  //     onSendPressed: _handleSendPressed,
-                  //     onAttachmentPressed: _handleAtachmentPressed),
-                  showUserNames: true,
-                  typingIndicatorOptions: TypingIndicatorOptions(),
-                  // disableImageGallery: true,
-                  bubbleBuilder: _bubbleBuilder,
-                  // onPreviewDataFetched: _handlePreviewDataFetched,
-                  onSendPressed: (partial) =>
-                      sendMessage(partial, widget.roomId, false),
-                  // audioMessageBuilder: (p0, {required messageWidth}) {
-                  // var audioPlayer = AudioPlayer();
-                  // return Message(emojiEnlargementBehavior: EmojiEnlargementBehavior.single,
-                  //   hideBackgroundOnEmojiMessages: true, message: AudioMessage(author: p0.author, duration: p0.duration, id: p0.id, name: p0.name, size: p0.size, uri:p0.uri), messageWidth: messageWidth, roundBorder: null, showAvatar: null, showName: null, showStatus: null, showUserAvatars: null, textMessageOptions: null, usePreviewData: null,);
+                    // listBottomWidget: Container(
+                    //   color: Colors.redAccent,
+                    // ),
+                    // customBottomWidget: Container(
+                    //     // color: Colors.red,
+                    //     // height: 20,
+                    //     ),
+                    theme: DefaultChatTheme(
+                        // attachmentButtonIcon: recorder.isRecording
+                        //     ? StreamBuilder<RecordingDisposition>(
+                        //         stream: recorder.onProgress,
+                        //         builder: (context, snapshot) {
+                        //           final duration = snapshot.hasData
+                        //               ? snapshot.data!.duration
+                        //               : Duration.zero;
+                        //           String towDidits(int n) =>
+                        //               n.toString().padLeft(0);
+                        //           final towDiditsMinutes =
+                        //               towDidits(duration.inMinutes.remainder(60));
+                        //           final towDiditsSecond =
+                        //               towDidits(duration.inSeconds.remainder(60));
+                        //           durationAudio = snapshot.data!.duration;
+                        //           if (duration.inMinutes == 1) {
+                        //             stop();
+                        //             setState(() {});
+                        //             durationAudio = snapshot.data!.duration;
+                        //           }
 
-                  // return audioWidget(
-                  //   p0: p0,
-                  // );
-                  // Lottie.asset(
-                  //   'ssss',
-                  // );
-                  // },
+                        //           return Text(
+                        //             '$towDiditsMinutes:$towDiditsSecond',
+                        //             style: TextStyle(
+                        //               fontSize: 12.sp,
+                        //               color: ColorManager.mainColor,
+                        //             ),
+                        //           );
+                        //         },
+                        //       )
+                        //     :
+                        //     Container(
+                        //         height: 50,
+                        //         decoration: BoxDecoration(
+                        //             gradient: LinearGradient(
+                        //               colors: widget.color == null
+                        //                   ? [
+                        //                       ColorManager.mainColor,
+                        //                       ColorManager.gradiantSplash
+                        //                     ]
+                        //                   : widget.color!
+                        //                       .split(',')
+                        //                       .map((e) => HexColor.fromHex(e))
+                        //                       .toList(),
+                        //               tileMode: TileMode.decal,
+                        //               begin: Alignment.centerLeft,
+                        //               end: Alignment.centerRight,
+                        //             ),
+                        //             shape: BoxShape.circle),
+                        //         child: Icon(
+                        //           Icons.add,
+                        //           color: Colors.white,
+                        //         ),
+                        //       ),
+                        receivedMessageBodyTextStyle:
+                            const TextStyle(color: ColorManager.goodMorning),
+                        inputContainerDecoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20)),
+                        backgroundColor: const Color(0xffF7F7F7),
+                        // attachmentButtonMargin: EdgeInsets.zero,
+                        inputTextColor: Colors.black,
+                        sendButtonMargin: EdgeInsets.zero,
+                        sendButtonIcon: Container(
+                          width: 50,
+                          height: 50,
+                          decoration: const BoxDecoration(
+                              color: ColorManager.solidPurple,
+                              shape: BoxShape.circle),
+                          child: SvgPicture.asset(
+                            ImageAssets.iconSend,
+                            height: 20,
+                            width: 20,
+                            fit: BoxFit.none,
+                          ),
+                        ),
+                        inputTextDecoration: InputDecoration(
+                            hintText: 'Type Your massage',
+                            enabled: true,
+                            hintStyle:
+                                getBoldStyle(color: const Color(0xff8D96A5)))),
+                    l10n: const ChatL10nEn(
+                      inputPlaceholder: 'Type Your massage',
+                      unreadMessagesLabel: "Unread messages",
+                    ),
 
-                  user: types.User(
-                    id: Storage().firebaseUID ?? '',
-                    imageUrl:
-                        'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png',
+                    // customBottomWidget: InputCustomWidget(
+                    //     customWidget: IconButton(
+                    //       constraints: const BoxConstraints(
+                    //         minHeight: 24,
+                    //         minWidth: 24,
+                    //       ),
+                    //       icon: Icon(
+                    //         recorder.isRecording ? Icons.stop : Icons.mic,
+                    //         color: widget.color != null
+                    //             ? widget.color!
+                    //                 .split(',')
+                    //                 .map((e) => HexColor.fromHex(e))
+                    //                 .toList()
+                    //                 .first
+                    //             : ColorManager.mainColor,
+                    //       ),
+                    //       onPressed: () async {
+                    //         if (recorder.isRecording) {
+                    //           await stop();
+                    //         } else {
+                    //           await initRecorder();
+                    //         }
+                    //         setState(() {});
+                    //       },
+                    //       splashRadius: 24,
+                    //     ),
+                    //     options: InputOptions(
+                    //         enableSuggestions: true,
+                    //         sendButtonVisibilityMode:
+                    //             SendButtonVisibilityMode.editing),
+                    //     onSendPressed: _handleSendPressed,
+                    //     onAttachmentPressed: _handleAtachmentPressed),
+                    showUserNames: true,
+                    typingIndicatorOptions: const TypingIndicatorOptions(),
+                    // disableImageGallery: true,
+                    bubbleBuilder: _bubbleBuilder,
+                    // onPreviewDataFetched: _handlePreviewDataFetched,
+                    onSendPressed: (partial) => sendMessage(partial, false),
+                    // audioMessageBuilder: (p0, {required messageWidth}) {
+                    // var audioPlayer = AudioPlayer();
+                    // return Message(emojiEnlargementBehavior: EmojiEnlargementBehavior.single,
+                    //   hideBackgroundOnEmojiMessages: true, message: AudioMessage(author: p0.author, duration: p0.duration, id: p0.id, name: p0.name, size: p0.size, uri:p0.uri), messageWidth: messageWidth, roundBorder: null, showAvatar: null, showName: null, showStatus: null, showUserAvatars: null, textMessageOptions: null, usePreviewData: null,);
+
+                    // return audioWidget(
+                    //   p0: p0,
+                    // );
+                    // Lottie.asset(
+                    //   'ssss',
+                    // );
+                    // },
+
+                    user: types.User(
+                      id: Storage().firebaseUID ?? '',
+                      imageUrl:
+                          'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png',
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
 
           // Container(
@@ -571,8 +551,8 @@ class _ChatScreenState extends State<ChatScreen> {
       Bubble(
         color: Storage().firebaseUID != message.author.id ||
                 message.type == types.MessageType.image
-            ? const Color(0xfff5f5f7)
-            : ColorManager.mainColor,
+            ? ColorManager.white
+            : ColorManager.solidPurple,
         margin: nextMessageInGroup
             ? const BubbleEdges.symmetric(horizontal: 6)
             : null,
@@ -582,5 +562,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 ? BubbleNip.leftBottom
                 : BubbleNip.rightBottom,
         child: child,
+        style: const BubbleStyle(),
       );
 }

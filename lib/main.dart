@@ -16,9 +16,9 @@ Future<void> main() async {
   await GetStorage.init();
 
   // if (Firebase.apps.isEmpty) {
-    Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+  Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   // } else {
   //   Firebase.app(); // if already initialized, use that one
   // }
@@ -32,21 +32,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-        designSize: const Size(414, 896),
-        minTextAdapt: true,
-        splitScreenMode: true,
-        builder: ((context, child) {
-          return GetMaterialApp(
-            theme: ThemeData(fontFamily: 'Montserrat',appBarTheme: AppBarTheme(iconTheme: IconThemeData(color: ColorManager.goodMorning))),
-            debugShowCheckedModeBanner: false,
-            getPages: AppPages.pages,
-            initialBinding: MainBindings(),
-            initialRoute: AppRoutes.splash,
+      designSize: const Size(414, 896),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: ((context, child) {
+        return GetMaterialApp(
+          theme: ThemeData(
+              fontFamily: 'Montserrat',
+              appBarTheme: AppBarTheme(
+                  iconTheme: IconThemeData(color: ColorManager.goodMorning))),
+          debugShowCheckedModeBanner: false,
+          getPages: AppPages.pages,
+          initialBinding: MainBindings(),
+          initialRoute: AppRoutes.splash,
           // home: WalkingScreen(),
-          );
-        }
-        ),
-
+        );
+      }),
     );
   }
 }

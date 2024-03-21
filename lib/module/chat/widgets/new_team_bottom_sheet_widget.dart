@@ -63,26 +63,26 @@ class NewTeamBottomSheetWidget extends GetView<ChatController> {
                         Get.close(0);
                         Get.find<IShowBottomSheetHelper>()
                             .showBottomSheet(ShowBottomSheetInput(
-                          NewTeamDetailsBottomSheet(),
+                          const NewTeamDetailsBottomSheet(),
                           isScrollControlled: true,
                         ));
                       }, child: Text('Next', style: getBoldStyle(
-                          color: Color(0xff44327C), fontSize: 16.sp),)),
+                          color: const Color(0xff44327C), fontSize: 16.sp),)),
                     ],
                   ),
                   Text('1/344', style: getRegularStyle(
-                      color: Color(0xff44327C), fontSize: 12.sp),),
+                      color: const Color(0xff44327C), fontSize: 12.sp),),
                   SizedBox(height: 6.h,),
                   CustomTextFieldWidget(
                     hint: 'search here',
-                    colorFilled: Color(0xffD1D7E4)
+                    colorFilled: const Color(0xffD1D7E4)
                         .withOpacity(0.7),
                     prefix: const Icon(
                       Icons.search,
                       color: Color(0xFF464455),
                     ),
                     hintStyle: getRegularStyle(
-                        color: Color(0xFF464455),
+                        color: const Color(0xFF464455),
                         fontSize: 14.sp),
                   ),
                   SizedBox(height: 20.h,),
@@ -101,7 +101,7 @@ class NewTeamBottomSheetWidget extends GetView<ChatController> {
                              logic.groupSeparatorBuilder(groupByValue),
                          itemBuilder: (context, Data element) => ListTile(
 
-                             leading: CircleAvatar(
+                             leading: const CircleAvatar(
                                radius: 20,
                                foregroundImage:
                                AssetImage('assets/images/profile_avatar.png'),
@@ -112,15 +112,15 @@ class NewTeamBottomSheetWidget extends GetView<ChatController> {
                                    fontSize: FontSize.s16.sp),
                              ),
                            trailing: element.userData == null
-                               ? TextButton(onPressed: () {}, child: Text('Invite'))
+                               ? TextButton(onPressed: () {}, child: const Text('Invite'))
                                : Obx(() {
                              return Checkbox(
                                checkColor: Colors.white,
                                overlayColor:
-                               MaterialStateProperty.all(Color(0xffD9D9D9)),
+                               MaterialStateProperty.all(const Color(0xffD9D9D9)),
                                value: element.isCheck.value,
-                               activeColor: Color(0xffFB84A7),
-                               shape: CircleBorder(),
+                               activeColor: const Color(0xffFB84A7),
+                               shape: const CircleBorder(),
                                onChanged: (bool? value) {
                                  logic.isCheck(element);
                                },
@@ -134,7 +134,7 @@ class NewTeamBottomSheetWidget extends GetView<ChatController> {
                          order: GroupedListOrder.ASC, // optional
                        );
                        case RequestStatus.ERROR:
-                         return Center(
+                         return const Center(
                              child: CircularProgressIndicator());                     }
 
                   }),
