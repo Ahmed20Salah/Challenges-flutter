@@ -15,16 +15,17 @@ import '../../../../core/utils/image_picker/i_image_file.dart';
 import '../models/all_contact_model.dart';
 import '../models/create_team_model.dart';
 
-abstract class IChatDataSource{
+abstract class IChatDataSource {
   Future<Either<Failure, AllContactModel>> allContact();
-  Future<Either<Failure, CreateTeamModel>> createTeam(String name,IImageFile? avatarTeam,String userFirebaseUid);
-  Future<Either<Failure, String>> newContact(String firstName,String lastName , String phone);
-
+  Future<Either<Failure, CreateTeamModel>> createTeam(
+      {required String name,
+      IImageFile? avatarTeam,
+      required String userFirebaseUid});
+  Future<Either<Failure, String>> newContact(
+      String firstName, String lastName, String phone);
 }
 
-
-
-class ChatDataSource implements IChatDataSource{
+class ChatDataSource implements IChatDataSource {
   final IConnectivityChecker _connectivityChecker;
   final WebServiceConnections _webServiceConnections;
 
@@ -45,20 +46,23 @@ class ChatDataSource implements IChatDataSource{
 
         switch (response.statusCode) {
           case 200:
-            final errorResponseModel = ErrorResponseModel.fromJson(response.data);
+            final errorResponseModel =
+                ErrorResponseModel.fromJson(response.data);
             if (errorResponseModel.code == 200) {
-              AllContactModel myContactModel = AllContactModel.fromJson(response.data);
+              AllContactModel myContactModel =
+                  AllContactModel.fromJson(response.data);
               print(myContactModel.toString());
               return Right(myContactModel);
             } else {
               print(errorResponseModel.code.toString());
               print('return Failure with the desired exception');
-              return Left(Failure(errorResponseModel.code ?? ResponseCode.DEFAULT,
+              return Left(Failure(
+                  errorResponseModel.code ?? ResponseCode.DEFAULT,
                   errorResponseModel.message ?? ResponseMessage.DEFAULT));
             }
 
           default:
-          // 3.
+            // 3.
             print('return Failure with the desired exception');
 
             return Left(Failure(response.statusCode ?? ResponseCode.DEFAULT,
@@ -77,34 +81,37 @@ class ChatDataSource implements IChatDataSource{
   }
 
   @override
-  Future<Either<Failure, CreateTeamModel>> createTeam(String name, IImageFile? avatarTeam, String userFirebaseUid) async {
+  Future<Either<Failure, CreateTeamModel>> createTeam(
+      {required String name,
+      IImageFile? avatarTeam,
+      required String userFirebaseUid}) async {
     bool isConnected = await _connectivityChecker.isConnected();
     if (isConnected) {
       try {
         Response response = await _webServiceConnections.postRequest(
           path: API.createTeam,
           useMyPath: false,
-
           data: {'name': name, 'user_firebase_uid': userFirebaseUid},
           file: avatarTeam,
           showLoader: false,
         );
-        print(response.data.toString());
         switch (response.statusCode) {
           case 200:
-            final errorResponseModel = ErrorResponseModel.fromJson(response.data);
+            final errorResponseModel =
+                ErrorResponseModel.fromJson(response.data);
             if (errorResponseModel.code == 200) {
               CreateTeamModel updateProfileModel =
-              CreateTeamModel.fromJson(response.data);
+                  CreateTeamModel.fromJson(response.data);
 
               return Right(updateProfileModel);
             } else {
-              return Left(Failure(errorResponseModel.code ?? ResponseCode.DEFAULT,
+              return Left(Failure(
+                  errorResponseModel.code ?? ResponseCode.DEFAULT,
                   errorResponseModel.message ?? ResponseMessage.DEFAULT));
             }
 
           default:
-          // 3. return Failure with the desired exception
+            // 3. return Failure with the desired exception
             return Left(Failure(response.statusCode ?? ResponseCode.DEFAULT,
                 response.statusMessage ?? ResponseMessage.DEFAULT));
         }
@@ -119,36 +126,38 @@ class ChatDataSource implements IChatDataSource{
   }
 
   @override
-  Future<Either<Failure, String>> newContact(String firstName, String lastName, String phone) async {
+  Future<Either<Failure, String>> newContact(
+      String firstName, String lastName, String phone) async {
     bool isConnected = await _connectivityChecker.isConnected();
     if (isConnected) {
       try {
         Response response = await _webServiceConnections.postRequest(
           path: API.newContact,
           useMyPath: false,
-
-          data: {'First-Name': firstName, 'Last-Name': lastName,
-          'phone':phone
-
+          data: {
+            'First-Name': firstName,
+            'Last-Name': lastName,
+            'phone': phone
           },
           showLoader: false,
         );
-        print(response.data.toString());
         switch (response.statusCode) {
           case 200:
-            final errorResponseModel = ErrorResponseModel.fromJson(response.data);
+            final errorResponseModel =
+                ErrorResponseModel.fromJson(response.data);
             if (errorResponseModel.code == 200) {
               // CreateTeamModel updateProfileModel =
               // CreateTeamModel.fromJson(response.data);
 
-              return Right(errorResponseModel.message??'');
+              return Right(errorResponseModel.message ?? '');
             } else {
-              return Left(Failure(errorResponseModel.code ?? ResponseCode.DEFAULT,
+              return Left(Failure(
+                  errorResponseModel.code ?? ResponseCode.DEFAULT,
                   errorResponseModel.message ?? ResponseMessage.DEFAULT));
             }
 
           default:
-          // 3. return Failure with the desired exception
+            // 3. return Failure with the desired exception
             return Left(Failure(response.statusCode ?? ResponseCode.DEFAULT,
                 response.statusMessage ?? ResponseMessage.DEFAULT));
         }
@@ -161,5 +170,4 @@ class ChatDataSource implements IChatDataSource{
       return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
     }
   }
-
 }

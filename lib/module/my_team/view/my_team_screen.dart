@@ -82,8 +82,8 @@ class MyTeamScreen extends StatelessWidget {
                                SvgPicture.asset(
                                  ImageAssets.iconSpark, color: Color(0xffF99F1B),),
                                SizedBox(width: AppSize.s8.w,),
-                               Text('2,345 xp', style: getRegularStyle(
-                                   color: ColorManager.blackText),),
+                              //  Text('2,345 xp', style: getRegularStyle(
+                              //      color: ColorManager.blackText),),
 
                              ],
                            ),

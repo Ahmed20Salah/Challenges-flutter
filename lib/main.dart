@@ -14,9 +14,15 @@ import 'firebase_options.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
-  await Firebase.initializeApp(
+
+  // if (Firebase.apps.isEmpty) {
+  Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  // } else {
+  //   Firebase.app(); // if already initialized, use that one
+  // }
+
   runApp(const MyApp());
 }
 
@@ -26,21 +32,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-        designSize: const Size(414, 896),
-        minTextAdapt: true,
-        splitScreenMode: true,
-        builder: ((context, child) {
-          return GetMaterialApp(
-            theme: ThemeData(fontFamily: 'Montserrat',appBarTheme: AppBarTheme(iconTheme: IconThemeData(color: ColorManager.goodMorning))),
-            debugShowCheckedModeBanner: false,
-            getPages: AppPages.pages,
-            initialBinding: MainBindings(),
-            initialRoute: AppRoutes.splash,
+      designSize: const Size(414, 896),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: ((context, child) {
+        return GetMaterialApp(
+          theme: ThemeData(
+              fontFamily: 'Montserrat',
+              appBarTheme: AppBarTheme(
+                  iconTheme: IconThemeData(color: ColorManager.goodMorning))),
+          debugShowCheckedModeBanner: false,
+          getPages: AppPages.pages,
+          initialBinding: MainBindings(),
+          initialRoute: AppRoutes.splash,
           // home: WalkingScreen(),
-          );
-        }
-        ),
-
+        );
+      }),
     );
   }
 }

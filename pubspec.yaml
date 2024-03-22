@@ -67,6 +67,12 @@ dependencies:
   shimmer: ^3.0.0
   omni_datetime_picker: ^1.0.9
   flutter_spinbox: ^0.13.1
+  flutter_chat_ui: ^1.6.9
+  flutter_chat_types: ^3.6.2
+  flutter_firebase_chat_core: ^1.6.7
+  cloud_firestore: ^4.8.1
+
+  bubble: ^1.2.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
