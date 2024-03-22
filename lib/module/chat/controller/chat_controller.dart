@@ -46,11 +46,9 @@ class ChatController extends GetxController {
       selsect.value.removeWhere((element) =>
           element == contactModel.userData!.firebaseUid.toString());
     }
-    print(contactModel.userData?.firebaseUid.toString());
-    print(selsect.value.toString().replaceAll('[', '').replaceAll(']', ''));
     participants.value =
         selsect.value.toString().replaceAll('[', '').replaceAll(']', '');
-
+    print('participants $participants');
     update();
     refresh();
   }
@@ -125,10 +123,13 @@ class ChatController extends GetxController {
 
   Future<void> createTeam() async {
     final Either<Failure, CreateTeamModel> update =
-        await _chatDataSource.createTeam(teamNameController.text.trim(),
-            _filePickImage.value, participants.value);
+        await _chatDataSource.createTeam(
+            name: teamNameController.text.trim(),
+            avatarTeam: _filePickImage.value,
+            userFirebaseUid: participants.string);
     update.fold((l) => errorToast(l.message), (r) {
       successToast(r.message ?? 'Team added successfully');
+      createTeamChat(r);
       Get.close(0);
     });
   }
@@ -258,5 +259,12 @@ class ChatController extends GetxController {
           .doc(roomId)
           .update({'updatedAt': FieldValue.serverTimestamp()});
     }
+  }
+
+  createTeamChat(CreateTeamModel createTeamModel) async {
+    await FirebaseChatCore.instance.createGroupRoom(
+        name: createTeamModel.data!.name!,
+        imageUrl: createTeamModel.data!.image,
+        users: createTeamModel.users!.map((e) => types.User(id: e)).toList());
   }
 }

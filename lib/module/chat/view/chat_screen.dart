@@ -1,12 +1,14 @@
 import 'dart:developer';
 
 import 'package:bubble/bubble.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:global_online/core/config/apis/config_api.dart';
 import 'package:global_online/core/resources/resource.dart';
 import 'package:global_online/module/chat/data/models/all_contact_model.dart';
 import 'package:global_online/module/chat/data/models/message_model.dart';
@@ -33,7 +35,8 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   late Room? room;
   late String roomId;
-  late UserData? user;
+  late Map<String, dynamic>? user;
+  late bool isTeam;
 
   void sendMessage(dynamic partialMessage, bool? isPin) async {
     if (FirebaseAuth.instance.currentUser == null) return;
@@ -44,8 +47,8 @@ class _ChatScreenState extends State<ChatScreen> {
         'updatedAt': FieldValue.serverTimestamp(),
         'createdAt': FieldValue.serverTimestamp(),
         "type": "direct",
-        "name": user!.name,
-        'imageUrl': user!.avatar,
+        "name": user!['fristName'],
+        'imageUrl': user!['avatar'],
         "userIds": [roomId.split('_')[0], roomId.split('_')[1]]
       });
       _isNew = false;
@@ -87,10 +90,11 @@ class _ChatScreenState extends State<ChatScreen> {
     } else if (partialMessage is types.PartialText) {
       message = types.TextMessage.fromPartial(
           author: types.User(
-              id: FirebaseAuth.instance.currentUser!.uid,
+              id: Storage().userId ?? '',
               firstName: Storage().fistName,
-              lastName: Storage().lastName,
-              imageUrl: Storage().avatar),
+              lastName: 'Salah',
+              imageUrl: API.imageUrl(
+                  'images/ZNfcDzTGkHgLrNNac1Z9EaajETwVSotXPiNYrBzq.jpg')),
           id: '',
           partialText: partialMessage,
           showStatus: true,
@@ -121,34 +125,8 @@ class _ChatScreenState extends State<ChatScreen> {
     _isNew = Get.arguments['isNew'] ?? false;
     roomId = Get.arguments['roomId'];
     user = Get.arguments['userData'];
-    getUsers();
+    isTeam = Get.arguments['isTeam'] ?? false;
     super.initState();
-  }
-
-  getUsers() async {
-    String userId = roomId.split('_')[0];
-    // Reference to the users collection
-    CollectionReference users = FirebaseFirestore.instance.collection('Users');
-
-    // Get the document snapshot for the user with the provided ID
-    DocumentSnapshot userData =
-        await users.doc('xXuUgGdkFpPkHeq6oH94KjjlKbS2').get();
-
-    // Check if the document exists
-    if (userData.exists) {
-      // Return the user data
-      print(userData.data() as Map<String, dynamic>);
-    } else {
-      // Document does not exist
-      print('User with ID ${'xXuUgGdkFpPkHeq6oH94KjjlKbS2'} does not exist.');
-      // return null;
-    }
-    // AggregateQuery usersData = await FirebaseFirestore.instance
-    //     .collection('Rooms')
-    //     .where('userIds', arrayContains: FirebaseAuth.instance.currentUser!.uid)
-    //     .count();
-
-    // print(usersData.query.parameters);
   }
 
   @override
@@ -159,6 +137,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(Get.arguments);
+    print(user);
     return Scaffold(
       backgroundColor: ColorManager.background,
       appBar: AppBar(
@@ -168,14 +148,17 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             CircleAvatar(
               radius: 21.0,
-              foregroundImage: AssetImage(user?.avatar ?? ImageAssets.profile),
+              foregroundImage: CachedNetworkImageProvider(user?['imageUrl'] !=
+                      null
+                  ? API.imageUrl(user?['imageUrl'])
+                  : 'https://cdn.logojoy.com/wp-content/uploads/2018/05/30161703/251.png'),
             ),
             const SizedBox(width: 12.0),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  user?.name ?? "",
+                  user?['firstName'] ?? "",
                   style: getBoldItalicStyle(
                     color: ColorManager.goodMorning,
                     fontSize: 16.sp,
@@ -283,9 +266,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
                     showUserAvatars: true,
                     onMessageVisibilityChanged: (p0, visible) {
-                      log('author ${visible.toString()}');
-                      log('author ${p0.author.id.toString()}');
-                      log('firebaseUID ${Storage().firebaseUID.toString()}');
                       bool theOtherUser = Storage().firebaseUID != p0.author.id;
                       if (visible && theOtherUser) {
                         Map<String, dynamic> jsonMessage = p0.toJson();
@@ -459,8 +439,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                     user: types.User(
                       id: Storage().firebaseUID ?? '',
-                      imageUrl:
-                          'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png',
+                      imageUrl: Storage().avatar,
                     ),
                   ),
                 );

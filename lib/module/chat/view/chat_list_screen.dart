@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:global_online/core/config/apis/config_api.dart';
 import 'package:global_online/core/resources/resource.dart';
 import 'package:global_online/core/routes/app_routes.dart';
 import 'package:global_online/core/widgets/custom_text_field_widget.dart';
@@ -135,34 +137,40 @@ class _ChatItemState extends State<ChatItem> {
   }
 
   getUsers() async {
-    List<dynamic> userIds = widget.snapshot['userIds'];
-
-    String userId = userIds[0] == FirebaseAuth.instance.currentUser!.uid
-        ? userIds[1]
-        : userIds[0];
-
-    // Reference to the users collection
-    CollectionReference users = FirebaseFirestore.instance.collection('Users');
-
-    // Get the document snapshot for the user with the provided ID
-    DocumentSnapshot userDataDocument = await users.doc(userId).get();
-
-    // Check if the document exists
-    if (userDataDocument.exists) {
-      // Return the user data
-      setState(() {
-        userData = (userDataDocument.data() as Map<String, dynamic>);
-      });
-      if (kDebugMode) {
-        print(userDataDocument.data() as Map<String, dynamic>);
-      }
+    if (widget.snapshot['type'] == 'group') {
+      userData['firstName'] = widget.snapshot['name'];
     } else {
-      // Document does not exist
-      if (kDebugMode) {
-        print('User with ID $userId does not exist.');
+      List<dynamic> userIds = widget.snapshot['userIds'];
+
+      String userId = userIds[0] == FirebaseAuth.instance.currentUser!.uid
+          ? userIds[1]
+          : userIds[0];
+
+      // Reference to the users collection
+      CollectionReference users =
+          FirebaseFirestore.instance.collection('Users');
+
+      // Get the document snapshot for the user with the provided ID
+      DocumentSnapshot userDataDocument = await users.doc(userId).get();
+
+      // Check if the document exists
+      if (userDataDocument.exists) {
+        // Return the user data
+        setState(() {
+          userData = (userDataDocument.data() as Map<String, dynamic>);
+        });
+        if (kDebugMode) {
+          print(userDataDocument.data() as Map<String, dynamic>);
+        }
+      } else {
+        // Document does not exist
+        if (kDebugMode) {
+          print('User with ID $userId does not exist.');
+        }
+        // return null;
       }
-      // return null;
     }
+
     // AggregateQuery usersData = await FirebaseFirestore.instance
     //     .collection('Rooms')
     //     .where('userIds', arrayContains: FirebaseAuth.instance.currentUser!.uid)
@@ -175,15 +183,19 @@ class _ChatItemState extends State<ChatItem> {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
+        userData['imageUrl'] = widget.snapshot['imageUrl'];
         Get.toNamed(AppRoutes.chat, arguments: {
           'roomId': widget.snapshot.id,
-          userData: UserData.fromJson(userData),
+          'userData': userData,
         });
       },
       leading: CircleAvatar(
         radius: 21.0,
-        foregroundImage:
-            AssetImage(widget.snapshot['imageUrl'] ?? ImageAssets.profile),
+        foregroundImage: CachedNetworkImageProvider(widget
+                    .snapshot['imageUrl'] !=
+                null
+            ? API.imageUrl(widget.snapshot['imageUrl'])
+            : 'https://cdn.logojoy.com/wp-content/uploads/2018/05/30161703/251.png'),
       ),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

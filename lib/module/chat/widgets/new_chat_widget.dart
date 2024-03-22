@@ -111,7 +111,7 @@ class NewChatWidget extends GetView<ChatController> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          Get.close(0);
+                          // Get.close(0);
                           Get.find<IShowBottomSheetHelper>()
                               .showBottomSheet(ShowBottomSheetInput(
                             const NewTeamBottomSheetWidget(),
