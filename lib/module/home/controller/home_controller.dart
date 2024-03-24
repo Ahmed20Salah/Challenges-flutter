@@ -36,8 +36,8 @@ class HomeController extends GetxController {
     super.onInit();
     Get.find<MainController>().getUser();
     getChallenges();
-    // addContact(
-    //     '+972599229320,+972599229820,+972599221120,+972598444111,+972597723826');
+    addContact(
+        '+972599229320,+972599229820,+972599221120,+972598444111,+972597723826');
   }
 
   Future<void> addContact(String phones) async {
