@@ -1,6 +1,3 @@
-
-
-
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:global_online/core/config/apis/config_api.dart';
@@ -15,37 +12,96 @@ import '../models/login_model.dart';
 
 abstract class IAuthDataSource {
   Future<Either<Failure, RegisterModel>> register(
-      String name, String email,String password, String confirmPassword, String phone);
-  Future<Either<Failure, LoginModel>> login(
-      String uid);
+      {required String name,
+      required String email,
+      required String password,
+      required String confirmPassword,
+      required String phone,
+      required String firebaseUid});
+  Future<Either<Failure, LoginModel>> login(String uid);
+
+  Future<Either<Failure, bool>> verfiyAccountExistance(
+      {required String phone, required String email});
 }
 
 class AuthDataSource implements IAuthDataSource {
   final WebServiceConnections _webServiceConnections;
   final IConnectivityChecker _connectivityChecker;
 
-  AuthDataSource(this._webServiceConnections, this._connectivityChecker);
+  AuthDataSource(this._webServiceConnections, this._connectivityChecker) {
+    print('AuthDataSource Instance');
+  }
 
   @override
-  Future<Either<Failure, RegisterModel>> register(String name, String email,String password, String confirmPassword, String phone) async {
+  Future<Either<Failure, RegisterModel>> register({
+    required String name,
+    required String email,
+    required String password,
+    required String confirmPassword,
+    required String phone,
+    required String firebaseUid,
+  }) async {
+    // bool isConnected = await _connectivityChecker.isConnected();
+    // if (isConnected) {
+    //   print({
+    //     'name': name,
+    //     'phone': phone,
+    //     'email': email,
+    //     'password': password,
+    //     'confirm_password': confirmPassword,
+    //     "firebase_uid": firebaseUid
+    //   });
+    try {
+      Response response = await _webServiceConnections.postRequest(
+        path: API.register,
+        data: {
+          'name': name,
+          'phone': phone,
+          'email': email,
+          'password': password,
+          'confirm_password': confirmPassword,
+          "firebase_uid": firebaseUid
+        },
+        showLoader: true,
+      );
+      print(response.data.toString());
+      print(response.statusCode.toString());
+      switch (response.statusCode) {
+        case 200:
+          final errorResponseModel = ErrorResponseModel.fromJson(response.data);
+          if (errorResponseModel.code == 200) {
+            RegisterModel registerModel = RegisterModel.fromJson(response.data);
+
+            return Right(registerModel);
+          } else {
+            return Left(Failure(errorResponseModel.code ?? ResponseCode.DEFAULT,
+                errorResponseModel.message ?? ResponseMessage.DEFAULT));
+          }
+
+        default:
+          // 3. return Failure with the desired exception
+          return Left(Failure(response.statusCode ?? ResponseCode.DEFAULT,
+              response.statusMessage ?? ResponseMessage.DEFAULT));
+      }
+
+      // return registerModel;
+    } catch (error) {
+      return Left(ErrorHandler.handle(error).failure);
+    }
+    // } else {
+    //   return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    // }
+  }
+
+  @override
+  Future<Either<Failure, LoginModel>> login(String uid) async {
     bool isConnected = await _connectivityChecker.isConnected();
     if (isConnected) {
-      print({
-        'name':name,
-        'phone':phone,
-        'email':email,
-        'password':password,
-        'confirm_password':confirmPassword
-      });
       try {
         Response response = await _webServiceConnections.postRequest(
-          path: API.register,
+          path: API.login,
           data: {
-        'name':name,
-        'phone':phone,
-        'email':email,
-        'password':password,
-        'confirm_password':confirmPassword
+            'uid': uid,
           },
           showLoader: true,
         );
@@ -53,30 +109,27 @@ class AuthDataSource implements IAuthDataSource {
         print(response.statusCode.toString());
         switch (response.statusCode) {
           case 200:
-            final errorResponseModel = ErrorResponseModel.fromJson(
-                response.data);
+            final errorResponseModel =
+                ErrorResponseModel.fromJson(response.data);
             if (errorResponseModel.code == 200) {
-              RegisterModel registerModel = RegisterModel.fromJson(
-                  response.data);
+              LoginModel registerModel = LoginModel.fromJson(response.data);
 
               return Right(registerModel);
             } else {
-              return Left(
-                  Failure(errorResponseModel.code ?? ResponseCode.DEFAULT,
-                      errorResponseModel.message ?? ResponseMessage.DEFAULT));
+              return Left(Failure(
+                  errorResponseModel.code ?? ResponseCode.DEFAULT,
+                  errorResponseModel.message ?? ResponseMessage.DEFAULT));
             }
 
           default:
-          // 3. return Failure with the desired exception
+            // 3. return Failure with the desired exception
             return Left(Failure(response.statusCode ?? ResponseCode.DEFAULT,
                 response.statusMessage ?? ResponseMessage.DEFAULT));
         }
 
         // return registerModel;
       } catch (error) {
-        return Left(ErrorHandler
-            .handle(error)
-            .failure);
+        return Left(ErrorHandler.handle(error).failure);
       }
     } else {
       return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
@@ -84,45 +137,40 @@ class AuthDataSource implements IAuthDataSource {
   }
 
   @override
-  Future<Either<Failure, LoginModel>> login(String uid) async{
+  Future<Either<Failure, bool>> verfiyAccountExistance(
+      {required String phone, required String email}) async {
     bool isConnected = await _connectivityChecker.isConnected();
-    if (isConnected) {
+    if (true) {
       try {
         Response response = await _webServiceConnections.postRequest(
-          path: API.login,
+          path: API.checkUserExist,
           data: {
-            'uid':uid,
+            'email': email,
+            'phone': phone,
           },
           showLoader: true,
         );
-        print(response.data.toString());
-        print(response.statusCode.toString());
         switch (response.statusCode) {
           case 200:
-            final errorResponseModel = ErrorResponseModel.fromJson(
-                response.data);
+            final errorResponseModel =
+                ErrorResponseModel.fromJson(response.data);
             if (errorResponseModel.code == 200) {
-              LoginModel registerModel = LoginModel.fromJson(
-                  response.data);
-
-              return Right(registerModel);
+              return const Right(true);
             } else {
-              return Left(
-                  Failure(errorResponseModel.code ?? ResponseCode.DEFAULT,
-                      errorResponseModel.message ?? ResponseMessage.DEFAULT));
+              return Left(Failure(
+                  errorResponseModel.code ?? ResponseCode.DEFAULT,
+                  errorResponseModel.message ?? ResponseMessage.DEFAULT));
             }
 
           default:
-          // 3. return Failure with the desired exception
+            // 3. return Failure with the desired exception
             return Left(Failure(response.statusCode ?? ResponseCode.DEFAULT,
                 response.statusMessage ?? ResponseMessage.DEFAULT));
         }
 
         // return registerModel;
       } catch (error) {
-        return Left(ErrorHandler
-            .handle(error)
-            .failure);
+        return Left(ErrorHandler.handle(error).failure);
       }
     } else {
       return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());

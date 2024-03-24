@@ -199,7 +199,7 @@ class SignUpScreen extends StatelessWidget {
                                 fontSize: FontSize.s16.sp),
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                logic.register();
+                                logic.verfiyAccount();
                               }
                             },
                           )

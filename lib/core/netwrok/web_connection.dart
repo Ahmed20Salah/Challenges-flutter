@@ -10,7 +10,6 @@ import '../config/apis/config_api.dart';
 import '../helpers/page_loading_dialog/page_loading_dialog.dart';
 import '../utils/image_picker/i_image_file.dart';
 
-
 class WebServiceConnections {
   WebServiceConnections(
     this._dioInstance,
@@ -35,6 +34,8 @@ class WebServiceConnections {
       _dioInstance.interceptors.add(CurlLoggerDioInterceptor(
         printOnSuccess: true,
       ));
+
+      print('get Request with path:  $path');
     }
     dio.Response response;
     try {
@@ -68,15 +69,16 @@ class WebServiceConnections {
     bool useObject = false,
     IImageFile? file,
   }) async {
-    print('heeelo');
     PageLoadingDialogStatus? loader;
     if (showLoader) {
       loader = _pageLoading.showLoadingDialog();
     }
     if (kDebugMode) {
       _dioInstance.interceptors.add(CurlLoggerDioInterceptor(
-          // printOnSuccess: false,
-          ));
+        printOnSuccess: false,
+      ));
+
+      print('Post request with parameters $data to $path');
     }
     dio.Response response;
     try {
@@ -99,7 +101,7 @@ class WebServiceConnections {
         response = await _dioInstance.post(
           useMyPath ? path! : '${API.baseUrl}$path',
           options: AuthHeader.getBaseOption(jwtToken: _storage.jwtToken),
-          data:useObject ? object : data,
+          data: useObject ? object : data,
         );
         print('${response.statusMessage}');
       }
