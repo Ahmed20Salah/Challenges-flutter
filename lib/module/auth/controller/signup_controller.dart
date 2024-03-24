@@ -28,15 +28,26 @@ class SignUpController extends GetxController {
   String oTPCode = '';
   RxString verificationIdUser = ''.obs;
 
-  Future<void> register() async {
+  Future<void> register(String uid) async {
     final registerModel = await _authDataSource.register(
-        nameRegisterController.text,
-        emailRegisterController.text,
-        passwordRegisterController.text,
-        passwordConfirmRegisterController.text,
-        numberRegisterController.text);
+        name: nameRegisterController.text,
+        email: emailRegisterController.text,
+        password: passwordRegisterController.text,
+        confirmPassword: passwordConfirmRegisterController.text,
+        phone: numberRegisterController.text,
+        firebaseUid: uid);
     registerModel.fold((l) => errorToast(l.message), (r) async {
       Get.toNamed(AppRoutes.login);
+    });
+    // clearTextField();
+  }
+
+  Future<void> verfiyAccount() async {
+    final verfiyAccountExistance = await _authDataSource.verfiyAccountExistance(
+        email: emailRegisterController.text,
+        phone: numberRegisterController.text);
+    verfiyAccountExistance.fold((l) => errorToast(l.message), (r) async {
+      verifyPhone(numberRegisterController.text);
     });
     // clearTextField();
   }
@@ -73,7 +84,7 @@ class SignUpController extends GetxController {
               .signInWithCredential(credential)
               .then((value) async {
             if (value.user != null) {
-              register();
+              register(value.user!.uid);
             }
           });
         },
@@ -98,8 +109,7 @@ class SignUpController extends GetxController {
               verificationId: verificationIdUser.value, smsCode: otp))
           .then((value) async {
         if (value.user != null) {
-
-          register();
+          register(value.user!.uid);
         }
       });
     } catch (e) {

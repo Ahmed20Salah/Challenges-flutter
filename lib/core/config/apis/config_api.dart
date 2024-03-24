@@ -3,6 +3,7 @@ class API {
   static const baseImageUrl = 'http://146.190.159.169:8050/storage/';
 
   static const register = '/register';
+  static const checkUserExist = '/check-user-exists';
   static const login = '/login';
   static const verifyOtp = '/resetOtp';
   static const UpdateFcm = '/resetOtp';
