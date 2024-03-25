@@ -22,7 +22,7 @@ class ChatListScreen extends StatelessWidget {
       firebaseUser = user;
     });
   }
-  User? firebaseUser;
+  late User? firebaseUser;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -183,10 +183,25 @@ class _ChatItemState extends State<ChatItem> {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
+        print(widget.snapshot.data());
+        Map<String, dynamic> data =
+            widget.snapshot.data() as Map<String, dynamic>;
+        data['createdAt'] = Timestamp.fromDate(
+                (widget.snapshot['createdAt'] as Timestamp).toDate())
+            .seconds;
+        data['updatedAt'] = Timestamp.fromDate(
+                (widget.snapshot['updatedAt'] as Timestamp).toDate())
+            .seconds;
+
+        data['users'] =
+            data['userIds'].map((e) => types.User(id: e).toJson()).toList();
+
+        data['id'] = widget.snapshot.id;
         userData['imageUrl'] = widget.snapshot['imageUrl'];
         Get.toNamed(AppRoutes.chat, arguments: {
           'roomId': widget.snapshot.id,
           'userData': userData,
+          "room": types.Room.fromJson(data),
         });
       },
       leading: CircleAvatar(
@@ -207,15 +222,27 @@ class _ChatItemState extends State<ChatItem> {
             overflow: TextOverflow.ellipsis,
             softWrap: true,
           ),
-          Text(
-            latestMessage.isNotEmpty ? latestMessage['text'] : '',
-            style: notSeen
-                ? getBoldStyle(color: ColorManager.blackText)
-                : getRegularStyle(
-                    color: ColorManager.blackText, fontSize: FontSize.s12.sp),
-            overflow: TextOverflow.ellipsis,
-            softWrap: true,
-          ),
+          latestMessage['type'] == 'text'
+              ? Text(
+                  latestMessage.isNotEmpty ? latestMessage['text'] : '',
+                  style: notSeen
+                      ? getBoldStyle(color: ColorManager.blackText)
+                      : getRegularStyle(
+                          color: ColorManager.blackText,
+                          fontSize: FontSize.s12.sp),
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: true,
+                )
+              : latestMessage['type'] == 'image'
+                  ? SizedBox(
+                      height: 10,
+                      width: 10,
+                      child: Image.network(latestMessage['uri']),
+                    )
+                  : Icon(
+                      Icons.file_copy,
+                      size: 10,
+                    ),
         ],
       ),
       trailing: unread > 0

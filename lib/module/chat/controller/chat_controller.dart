@@ -152,7 +152,6 @@ class ChatController extends GetxController {
     List<String> ids = [currenctUserId, receiverId];
     ids.sort();
     String roomId = ids.join('_');
-    print(Storage().firebaseUID);
     // types.Room room = types.Room(
     //   id: roomId,
     //   type: types.RoomType.direct,
