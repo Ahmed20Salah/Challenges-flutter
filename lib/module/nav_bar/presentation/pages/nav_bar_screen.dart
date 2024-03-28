@@ -37,7 +37,6 @@ class _NavBarScreenState extends State<NavBarScreen> {
           return Scaffold(
             key: _scaffoldKey,
             backgroundColor: ColorManager.background,
-
             appBar: AppBar(
               backgroundColor: ColorManager.white,
               title: Text(
