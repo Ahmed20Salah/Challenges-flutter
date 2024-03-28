@@ -1,9 +1,12 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:bubble/bubble.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:get/get.dart';
@@ -16,8 +19,14 @@ import 'package:global_online/module/chat/widgets/message_bubble.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_types/flutter_chat_types.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mime/mime.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 
+import '../../../core/netwrok/web_connection.dart';
 import '../../../core/utils/services/storage.dart';
+import 'package:http/http.dart' as http;
 
 // import 'flutter';
 
@@ -37,8 +46,9 @@ class _ChatScreenState extends State<ChatScreen> {
   late String roomId;
   late Map<String, dynamic>? user;
   late bool isTeam;
+  bool _isAttachmentUploading = false;
 
-  void sendMessage(dynamic partialMessage, bool? isPin) async {
+  void sendMessage(dynamic partialMessage) async {
     if (FirebaseAuth.instance.currentUser == null) return;
 
     types.Message? message;
@@ -83,7 +93,6 @@ class _ChatScreenState extends State<ChatScreen> {
               lastName: Storage().lastName,
               imageUrl: Storage().avatar),
           id: '',
-          remoteId: isPin != null ? 'Pin' : '',
           partialImage: partialMessage,
           showStatus: true,
           status: types.Status.sent);
@@ -126,6 +135,7 @@ class _ChatScreenState extends State<ChatScreen> {
     roomId = Get.arguments['roomId'];
     user = Get.arguments['userData'];
     isTeam = Get.arguments['isTeam'] ?? false;
+    room = Get.arguments['room'];
     super.initState();
   }
 
@@ -137,8 +147,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(Get.arguments);
-    print(user);
     return Scaffold(
       backgroundColor: ColorManager.background,
       appBar: AppBar(
@@ -164,22 +172,22 @@ class _ChatScreenState extends State<ChatScreen> {
                     fontSize: 16.sp,
                   ),
                 ),
-                Row(
-                  children: [
-                    SvgPicture.asset(
-                      ImageAssets.iconSpark,
-                      colorFilter: const ColorFilter.mode(
-                          ColorManager.orColor, BlendMode.srcIn),
-                    ),
-                    const SizedBox(width: 6.0),
-                    Text(
-                      '1,344 xp',
-                      style: getRegularStyle(
-                        color: ColorManager.goodMorning,
-                      ),
-                    ),
-                  ],
-                ),
+                // Row(
+                //   children: [
+                //     SvgPicture.asset(
+                //       ImageAssets.iconSpark,
+                //       colorFilter: const ColorFilter.mode(
+                //           ColorManager.orColor, BlendMode.srcIn),
+                //     ),
+                //     // const SizedBox(width: 6.0),
+                //     // Text(
+                //     //   '1,344 xp',
+                //     //   style: getRegularStyle(
+                //     //     color: ColorManager.goodMorning,
+                //     //   ),
+                //     // ),
+                //   ],
+                // ),
               ],
             ),
           ],
@@ -248,22 +256,16 @@ class _ChatScreenState extends State<ChatScreen> {
           Expanded(
             child: StreamBuilder<List<types.Message>>(
               initialData: const <types.Message>[],
-              stream: FirebaseChatCore.instance
-                  .messages(Room(id: roomId, type: RoomType.direct, users: [])),
+              stream: FirebaseChatCore.instance.messages(
+                  room ?? Room(id: roomId, type: RoomType.direct, users: [])),
               builder: (context, snapshot) {
                 return SizedBox(
                   width: double.infinity,
                   child: Chat(
-                    // audioMessageBuilder: (p0, {messageWidth}) {
-                    //   return Lottie.network('${p0}',
-                    //       animate: true, delegates: LottieDelegates());
-                    // },
-
-                    // isAttachmentUploading: _isAttachmentUploading,
+                    isAttachmentUploading: _isAttachmentUploading,
                     messages: snapshot.data ?? [],
-                    // onAttachmentPressed: _handleAtachmentPressed,
-                    // onMessageTap: _handleMessageTap,
-
+                    onAttachmentPressed: _handleAtachmentPressed,
+                    onMessageTap: _handleMessageTap,
                     showUserAvatars: true,
                     onMessageVisibilityChanged: (p0, visible) {
                       bool theOtherUser = Storage().firebaseUID != p0.author.id;
@@ -281,8 +283,6 @@ class _ChatScreenState extends State<ChatScreen> {
                         );
                         jsonMessage['authorId'] = p0.author.id;
                         jsonMessage['updatedAt'] = FieldValue.serverTimestamp();
-                        FirebaseChatCore.instance
-                            .updateMessage(updatedMessage, roomId);
 
                         FirebaseFirestore.instance
                             .collection('Rooms')
@@ -292,91 +292,66 @@ class _ChatScreenState extends State<ChatScreen> {
                             .update(jsonMessage);
                       }
                     },
-
-                    // listBottomWidget: Container(
-                    //   color: Colors.redAccent,
-                    // ),
-                    // customBottomWidget: Container(
-                    //     // color: Colors.red,
-                    //     // height: 20,
-                    //     ),
+                    listBottomWidget: Container(
+                      color: Colors.redAccent,
+                    ),
+                    inputOptions: const InputOptions(
+                      sendButtonVisibilityMode: SendButtonVisibilityMode.always,
+                    ),
                     theme: DefaultChatTheme(
-                        // attachmentButtonIcon: recorder.isRecording
-                        //     ? StreamBuilder<RecordingDisposition>(
-                        //         stream: recorder.onProgress,
-                        //         builder: (context, snapshot) {
-                        //           final duration = snapshot.hasData
-                        //               ? snapshot.data!.duration
-                        //               : Duration.zero;
-                        //           String towDidits(int n) =>
-                        //               n.toString().padLeft(0);
-                        //           final towDiditsMinutes =
-                        //               towDidits(duration.inMinutes.remainder(60));
-                        //           final towDiditsSecond =
-                        //               towDidits(duration.inSeconds.remainder(60));
-                        //           durationAudio = snapshot.data!.duration;
-                        //           if (duration.inMinutes == 1) {
-                        //             stop();
-                        //             setState(() {});
-                        //             durationAudio = snapshot.data!.duration;
-                        //           }
-
-                        //           return Text(
-                        //             '$towDiditsMinutes:$towDiditsSecond',
-                        //             style: TextStyle(
-                        //               fontSize: 12.sp,
-                        //               color: ColorManager.mainColor,
-                        //             ),
-                        //           );
-                        //         },
-                        //       )
-                        //     :
-                        //     Container(
-                        //         height: 50,
-                        //         decoration: BoxDecoration(
-                        //             gradient: LinearGradient(
-                        //               colors: widget.color == null
-                        //                   ? [
-                        //                       ColorManager.mainColor,
-                        //                       ColorManager.gradiantSplash
-                        //                     ]
-                        //                   : widget.color!
-                        //                       .split(',')
-                        //                       .map((e) => HexColor.fromHex(e))
-                        //                       .toList(),
-                        //               tileMode: TileMode.decal,
-                        //               begin: Alignment.centerLeft,
-                        //               end: Alignment.centerRight,
-                        //             ),
-                        //             shape: BoxShape.circle),
-                        //         child: Icon(
-                        //           Icons.add,
-                        //           color: Colors.white,
-                        //         ),
-                        //       ),
+                        inputMargin: const EdgeInsets.symmetric(
+                            horizontal: 10.0, vertical: 10.0),
+                        inputBackgroundColor: ColorManager.white,
+                        inputPadding: const EdgeInsets.symmetric(
+                            horizontal: 0.0, vertical: 6),
+                        attachmentButtonIcon: Container(
+                          width: 30.0,
+                          height: 30.0,
+                          decoration: const BoxDecoration(
+                              color: ColorManager.activeIcon,
+                              shape: BoxShape.circle),
+                          child: const Icon(
+                            Icons.add,
+                            color: ColorManager.white,
+                          ),
+                        ),
+                        inputSurfaceTintColor: ColorManager.activeIcon,
                         receivedMessageBodyTextStyle:
                             const TextStyle(color: ColorManager.goodMorning),
                         inputContainerDecoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20)),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(50),
+                        ),
                         backgroundColor: const Color(0xffF7F7F7),
-                        // attachmentButtonMargin: EdgeInsets.zero,
+                        attachmentButtonMargin:
+                            const EdgeInsets.symmetric(horizontal: 0),
                         inputTextColor: Colors.black,
                         sendButtonMargin: EdgeInsets.zero,
                         sendButtonIcon: Container(
-                          width: 50,
-                          height: 50,
+                          width: 38,
+                          height: 48,
                           decoration: const BoxDecoration(
                               color: ColorManager.solidPurple,
                               shape: BoxShape.circle),
                           child: SvgPicture.asset(
                             ImageAssets.iconSend,
-                            height: 20,
+                            height: 15,
                             width: 20,
                             fit: BoxFit.none,
                           ),
                         ),
                         inputTextDecoration: InputDecoration(
+                            fillColor: ColorManager.chatBackGround,
+                            filled: true,
+                            // isCollapsed: true,
+                            isDense: true,
+                            // enabledBorder: ,
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 10),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50.0),
+                              borderSide: BorderSide.none,
+                            ),
                             hintText: 'Type Your massage',
                             enabled: true,
                             hintStyle:
@@ -385,58 +360,12 @@ class _ChatScreenState extends State<ChatScreen> {
                       inputPlaceholder: 'Type Your massage',
                       unreadMessagesLabel: "Unread messages",
                     ),
-
-                    // customBottomWidget: InputCustomWidget(
-                    //     customWidget: IconButton(
-                    //       constraints: const BoxConstraints(
-                    //         minHeight: 24,
-                    //         minWidth: 24,
-                    //       ),
-                    //       icon: Icon(
-                    //         recorder.isRecording ? Icons.stop : Icons.mic,
-                    //         color: widget.color != null
-                    //             ? widget.color!
-                    //                 .split(',')
-                    //                 .map((e) => HexColor.fromHex(e))
-                    //                 .toList()
-                    //                 .first
-                    //             : ColorManager.mainColor,
-                    //       ),
-                    //       onPressed: () async {
-                    //         if (recorder.isRecording) {
-                    //           await stop();
-                    //         } else {
-                    //           await initRecorder();
-                    //         }
-                    //         setState(() {});
-                    //       },
-                    //       splashRadius: 24,
-                    //     ),
-                    //     options: InputOptions(
-                    //         enableSuggestions: true,
-                    //         sendButtonVisibilityMode:
-                    //             SendButtonVisibilityMode.editing),
-                    //     onSendPressed: _handleSendPressed,
-                    //     onAttachmentPressed: _handleAtachmentPressed),
+                    onSendPressed: _handleSendPressed,
                     showUserNames: true,
                     typingIndicatorOptions: const TypingIndicatorOptions(),
-                    // disableImageGallery: true,
+                    disableImageGallery: true,
                     bubbleBuilder: _bubbleBuilder,
-                    // onPreviewDataFetched: _handlePreviewDataFetched,
-                    onSendPressed: (partial) => sendMessage(partial, false),
-                    // audioMessageBuilder: (p0, {required messageWidth}) {
-                    // var audioPlayer = AudioPlayer();
-                    // return Message(emojiEnlargementBehavior: EmojiEnlargementBehavior.single,
-                    //   hideBackgroundOnEmojiMessages: true, message: AudioMessage(author: p0.author, duration: p0.duration, id: p0.id, name: p0.name, size: p0.size, uri:p0.uri), messageWidth: messageWidth, roundBorder: null, showAvatar: null, showName: null, showStatus: null, showUserAvatars: null, textMessageOptions: null, usePreviewData: null,);
-
-                    // return audioWidget(
-                    //   p0: p0,
-                    // );
-                    // Lottie.asset(
-                    //   'ssss',
-                    // );
-                    // },
-
+                    onPreviewDataFetched: _handlePreviewDataFetched,
                     user: types.User(
                       id: Storage().firebaseUID ?? '',
                       imageUrl: Storage().avatar,
@@ -543,4 +472,220 @@ class _ChatScreenState extends State<ChatScreen> {
         child: child,
         style: const BubbleStyle(),
       );
+
+  void _handleAtachmentPressed() {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) => SafeArea(
+        child: SizedBox(
+          height: 144,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _handleImageSelection();
+                },
+                child: const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text('Photo'),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _handleFileSelection();
+                },
+                child: const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text('File'),
+                ),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text('Cancel'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _handleImageSelection() async {
+    final result = await ImagePicker().pickImage(
+      imageQuality: 70,
+      maxWidth: 1440,
+      source: ImageSource.gallery,
+    );
+
+    if (result != null) {
+      _setAttachmentUploading(true);
+      final file = File(result.path);
+      final size = file.lengthSync();
+      final bytes = await result.readAsBytes();
+      final image = await decodeImageFromList(bytes);
+      final name = result.name;
+
+      UploadTask uploadTask;
+      try {
+        final reference =
+            FirebaseStorage.instance.ref().child('Global').child('/$name');
+        uploadTask = reference.putData(await file.readAsBytes());
+        final uri = await (await uploadTask).ref.getDownloadURL();
+
+        final message = types.PartialImage(
+          height: image.height.toDouble(),
+          name: name,
+          size: size,
+          uri: uri,
+          width: image.width.toDouble(),
+        );
+
+        sendMessage(message);
+        _setAttachmentUploading(false);
+      } finally {
+        _setAttachmentUploading(false);
+      }
+    }
+  }
+
+  void _setAttachmentUploading(bool uploading) {
+    setState(() {
+      _isAttachmentUploading = uploading;
+    });
+  }
+
+  void _handleFileSelection() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.any,
+    );
+
+    if (result != null && result.files.single.path != null) {
+      _setAttachmentUploading(true);
+      final name = result.files.single.name;
+      final filePath = result.files.single.path!;
+      final file = File(filePath);
+      UploadTask uploadTask;
+      try {
+        final reference =
+            FirebaseStorage.instance.ref().child('Global').child('/$name');
+        uploadTask = reference.putData(await file.readAsBytes());
+        final uri = await (await uploadTask).ref.getDownloadURL();
+
+        final message = types.PartialFile(
+          mimeType: lookupMimeType(filePath),
+          name: name,
+          size: result.files.single.size,
+          uri: uri,
+        );
+
+        sendMessage(message);
+        _setAttachmentUploading(false);
+      } finally {
+        _setAttachmentUploading(false);
+      }
+    }
+  }
+
+  void _handlePreviewDataFetched(
+    types.TextMessage message,
+    types.PreviewData previewData,
+  ) {
+    final updatedMessage = message.copyWith(previewData: previewData);
+
+    FirebaseChatCore.instance.updateMessage(updatedMessage, roomId);
+  }
+
+  void _handleMessageTap(BuildContext _, types.Message message) async {
+    if (message is types.FileMessage) {
+      var localPath = message.uri;
+
+      if (message.uri.startsWith('http')) {
+        try {
+          final updatedMessage = message.copyWith(isLoading: true);
+          FirebaseChatCore.instance.updateMessage(
+            updatedMessage,
+            roomId,
+          );
+
+          final client = http.Client();
+          final request = await client.get(Uri.parse(message.uri));
+          final bytes = request.bodyBytes;
+          final documentsDir = (await getApplicationDocumentsDirectory()).path;
+          localPath = '$documentsDir/${message.name}';
+
+          if (!File(localPath).existsSync()) {
+            final file = File(localPath);
+            await file.writeAsBytes(bytes);
+          }
+        } finally {
+          final updatedMessage = message.copyWith(isLoading: false);
+          FirebaseChatCore.instance.updateMessage(updatedMessage, roomId);
+        }
+      }
+
+      await OpenFilex.open(localPath);
+    }
+    if (message is types.AudioMessage) {
+      var localPath = message.uri;
+
+      if (message.uri.startsWith('https')) {
+        try {
+          final updatedMessage = message.copyWith();
+          FirebaseChatCore.instance.updateMessage(
+            updatedMessage,
+            roomId,
+          );
+
+          final client = http.Client();
+          final request = await client.get(Uri.parse(message.uri));
+          final bytes = request.bodyBytes;
+          final documentsDir = (await getApplicationDocumentsDirectory()).path;
+          localPath = '$documentsDir${message.name}';
+          if (!File(localPath).existsSync()) {
+            final file = File(localPath);
+            await file.writeAsBytes(bytes);
+          }
+          // await audioPlayer.setReleaseMode(ReleaseMode.loop);
+        } finally {
+          final updatedMessage = message.copyWith();
+          FirebaseChatCore.instance.updateMessage(updatedMessage, roomId);
+        }
+      }
+      // await audioPlayer.setSourceDeviceFile(
+      //   localPath,
+      // );
+      // audioPlayer.play(DeviceFileSource(localPath));
+      // await audioPlayer.setSourceDeviceFile(
+      //   localPath,
+      // );
+    }
+  }
+
+  void _handleSendPressed(types.PartialText message) {
+    sendMessage(message);
+    if (room != null) {
+      room?.users.forEach((element) {
+        sendNotification(element.id ?? '', message.text);
+      });
+    }
+  }
+
+  Future<void> sendNotification(
+    String fcmToken,
+    String body,
+  ) async {
+    var data = await Get.find<WebServiceConnections>().postFirebaseRequest(
+        useMyPath: true,
+        data: {
+          "to": fcmToken,
+          "notification": {"body": body, "title": Storage().fistName},
+        },
+        path: 'https://fcm.googleapis.com/fcm/send');
+  }
 }

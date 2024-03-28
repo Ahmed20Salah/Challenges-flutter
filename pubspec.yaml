@@ -71,6 +71,12 @@ dependencies:
   flutter_chat_types: ^3.6.2
   flutter_firebase_chat_core: ^1.6.7
   cloud_firestore: ^4.8.1
+  file_picker: ^5.3.0
+  open_filex: ^4.3.2
+  firebase_storage: ^11.2.3
+  mime: ^1.0.4
+  path_provider: ^2.0.15
+
 
   bubble: ^1.2.1
 dev_dependencies:
