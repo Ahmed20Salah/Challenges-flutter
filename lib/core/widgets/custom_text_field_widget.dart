@@ -16,6 +16,7 @@ class CustomTextFieldWidget extends StatelessWidget {
     this.prefix,
     this.hintStyle,
     this.onChange,
+    this.lines = 1,
   });
 
   final TextInputType? keyboardType;
@@ -30,6 +31,7 @@ class CustomTextFieldWidget extends StatelessWidget {
   final Color? colorFilled;
   final void Function()? onTap;
   final void Function(String)? onChange;
+  final int lines;
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +44,7 @@ class CustomTextFieldWidget extends StatelessWidget {
       controller: controller,
       readOnly: readOnly ?? false,
       obscureText: obscureText ?? false,
+      maxLines: lines,
       decoration: InputDecoration(
           filled: true,
           border: OutlineInputBorder(

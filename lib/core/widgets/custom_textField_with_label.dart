@@ -8,17 +8,21 @@ import '../resources/values_manager.dart';
 import 'custom_text_field_widget.dart';
 
 class CustomTextFieldWithLabel extends StatelessWidget {
-  const CustomTextFieldWithLabel(
-      {super.key,
-      required this.label,
-      required this.hint,
-      this.suffix,
-      this.labelStyle,
-      this.controller,
-      this.keyboardType,
-      this.obscureText = false,
-      this.readOnly = false,
-      this.validator, this.onTap});
+  const CustomTextFieldWithLabel({
+    super.key,
+    required this.label,
+    required this.hint,
+    this.suffix,
+    this.labelStyle,
+    this.controller,
+    this.keyboardType,
+    this.obscureText = false,
+    this.readOnly = false,
+    this.validator,
+    this.onTap,
+    this.color,
+    this.lines = 1,
+  });
   final String label;
   final String hint;
   final Widget? suffix;
@@ -29,6 +33,8 @@ class CustomTextFieldWithLabel extends StatelessWidget {
   final TextEditingController? controller;
   final TextStyle? labelStyle;
   final void Function()? onTap;
+  final Color? color;
+  final int lines;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -47,9 +53,16 @@ class CustomTextFieldWithLabel extends StatelessWidget {
         CustomTextFieldWidget(
           onTap: onTap,
           readOnly: readOnly,
-            keyboardType: keyboardType, validator: validator, controller: controller, obscureText: obscureText, suffix: suffix, hint: hint),
+          keyboardType: keyboardType,
+          validator: validator,
+          controller: controller,
+          obscureText: obscureText,
+          suffix: suffix,
+          hint: hint,
+          colorFilled: color,
+          lines: lines,
+        ),
       ],
     );
   }
 }
-

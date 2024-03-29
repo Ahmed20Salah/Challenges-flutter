@@ -1,10 +1,5 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/services.dart';
-import 'package:global_online/module/blogs/data/models/blog.dart';
 
 import '../../../../core/config/apis/config_api.dart';
 import '../../../../core/errors/error_response_model.dart';
@@ -13,52 +8,44 @@ import '../../../../core/netwrok/failure.dart';
 import '../../../../core/netwrok/web_connection.dart';
 import '../../../../core/utils/connectivity_check/i_connectivity_checker.dart';
 
-abstract class IBlogsDataSource {
-  Future<Either<Failure, List<BlogModel>>> getBlogs(String? word);
+abstract class IContactUsDataSource {
+  Future<Either<Failure, bool>> sendMessage(Map<String, dynamic> data);
 }
 
-class BlogsDataSource implements IBlogsDataSource {
+class ContactUsDataSource implements IContactUsDataSource {
   final IConnectivityChecker _connectivityChecker;
   final WebServiceConnections _webServiceConnections;
 
-  BlogsDataSource(this._connectivityChecker, this._webServiceConnections);
+  ContactUsDataSource(this._connectivityChecker, this._webServiceConnections);
   @override
-  Future<Either<Failure, List<BlogModel>>> getBlogs(String? word) async {
+  Future<Either<Failure, bool>> sendMessage(Map<String, dynamic> data) async {
     bool isConnected = await _connectivityChecker.isConnected();
     if (isConnected) {
       try {
         Response response = await _webServiceConnections.postRequest(
-          path: API.blogs,
+          path: API.contactUs,
           useMyPath: false,
-          data: {'search': word ?? ''},
+          data: data,
           showLoader: true,
         );
+
+        print(response.statusCode);
         switch (response.statusCode) {
           case 200:
             final errorResponseModel =
                 ErrorResponseModel.fromJson(response.data);
 
-            print(errorResponseModel.code);
-            if (errorResponseModel.code == 200) {
-              print(response.data);
-              try {
-                List<BlogModel> blogModel = [];
-
-                for (var element in response.data['data']) {
-                  blogModel.add(BlogModel.fromJson(element));
-                }
-
-                return Right(blogModel);
-              } catch (e) {
-                print(e);
-                return Left(Failure(500, e.toString()));
-              }
+            if (errorResponseModel.code == 200 ||
+                errorResponseModel.code == 201) {
+              return const Right(true);
             } else {
               return Left(Failure(
                   errorResponseModel.code ?? ResponseCode.DEFAULT,
                   errorResponseModel.message ?? ResponseMessage.DEFAULT));
             }
 
+          case 201:
+            return const Right(true);
           default:
             // 3. return Failure with the desired exception
             return Left(Failure(response.statusCode ?? ResponseCode.DEFAULT,

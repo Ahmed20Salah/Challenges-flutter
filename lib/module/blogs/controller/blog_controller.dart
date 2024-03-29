@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:global_online/core/utils/constant.dart';
 
 import 'package:global_online/module/blogs/data/data_source/blogs_data_source.dart';
-import 'package:global_online/module/blogs/data/data_source/models/blog.dart';
+import 'package:global_online/module/blogs/data/models/blog.dart';
 
 class BlogsController extends GetxController with StateMixin<List<BlogModel>> {
   IBlogsDataSource dataSource;

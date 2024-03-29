@@ -289,6 +289,10 @@ class CustomDrawer extends StatelessWidget {
                       ),
                     ),
                     ListTile(
+                      onTap: () {
+                        logic.toggleDrawer();
+                        Get.toNamed(AppRoutes.contactUs);
+                      },
                       leading: SvgPicture.asset(ImageAssets.iconContactUs),
                       horizontalTitleGap: 10,
                       title: Text(

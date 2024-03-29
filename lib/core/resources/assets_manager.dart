@@ -53,4 +53,5 @@ class ImageAssets {
   static const String character = "$imagePath/character.png";
   static const String profile = "$imagePath/profile_avatar.png";
   static const String loadingAnimate = "$jsonPath/loading.json";
+  static const String contactUs= "$imagePath/contact_us.svg";
 }

@@ -4,6 +4,7 @@ import 'package:global_online/module/auth/view/signup_screen.dart';
 import 'package:global_online/module/blogs/views/blogs_screen.dart';
 import 'package:global_online/module/challenge_details/view/challenge_details_screen.dart';
 import 'package:global_online/module/chat/view/chat_screen.dart';
+import 'package:global_online/module/contact_us/views/contact_us.dart';
 import 'package:global_online/module/create_challenges/view/create_challenges_screen.dart';
 import 'package:global_online/module/team_details/view/team_details_screen.dart';
 
@@ -13,6 +14,7 @@ import '../../module/profile/view/profile_screen.dart';
 import '../../module/splash/view/splash_screen.dart';
 import '../bindings/challenges_details_bindings.dart';
 import '../bindings/chat_bindings.dart';
+import '../bindings/contact_us_bindings.dart';
 import '../bindings/create_challenge_bindings.dart';
 import '../bindings/login_bindings.dart';
 import '../bindings/nav_bar_bindings.dart';
@@ -71,6 +73,11 @@ class AppPages {
       name: AppRoutes.blogs,
       page: () => const BlogsScreen(),
       binding: BlogBindings(),
+    ),
+    GetPage(
+      name: AppRoutes.contactUs,
+      page: () => ContactUsScreen(),
+      binding: ContactUsBindings(),
     ),
   ];
 }

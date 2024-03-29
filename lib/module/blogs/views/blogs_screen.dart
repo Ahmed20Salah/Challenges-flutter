@@ -267,7 +267,7 @@ class BlogsScreen extends GetView<BlogsController> {
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 25, vertical: 15),
-                      margin: EdgeInsets.symmetric(horizontal: 26),
+                      margin: const EdgeInsets.symmetric(horizontal: 26),
                       decoration: BoxDecoration(
                           color: ColorManager.white,
                           borderRadius: BorderRadius.circular(20)),
