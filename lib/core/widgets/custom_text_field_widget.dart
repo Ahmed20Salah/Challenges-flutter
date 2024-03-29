@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:global_online/core/resources/resource.dart';
+
 class CustomTextFieldWidget extends StatelessWidget {
   const CustomTextFieldWidget({
     super.key,
-     this.keyboardType,
-     this.validator,
-     this.controller,
-     this.onTap,
-     this.obscureText,
-     this.readOnly,
-
-     this.suffix,
-     required this.hint, this.colorFilled, this.prefix, this.hintStyle,
+    this.keyboardType,
+    this.validator,
+    this.controller,
+    this.onTap,
+    this.obscureText,
+    this.readOnly,
+    this.suffix,
+    required this.hint,
+    this.colorFilled,
+    this.prefix,
+    this.hintStyle,
+    this.onChange,
   });
 
   final TextInputType? keyboardType;
@@ -25,11 +29,13 @@ class CustomTextFieldWidget extends StatelessWidget {
   final String hint;
   final Color? colorFilled;
   final void Function()? onTap;
+  final void Function(String)? onChange;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       onTap: onTap,
+      onChanged: onChange,
       keyboardType: keyboardType,
       validator: validator,
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -47,8 +53,9 @@ class CustomTextFieldWidget extends StatelessWidget {
               right: AppSize.s12.w,
               bottom: AppSize.s18.h),
           fillColor: colorFilled ?? ColorManager.white,
-          hintStyle: hintStyle ?? getRegularStyle(
-              color: ColorManager.hintColor, fontSize: FontSize.s16.sp),
+          hintStyle: hintStyle ??
+              getRegularStyle(
+                  color: ColorManager.hintColor, fontSize: FontSize.s16.sp),
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppSize.s10.r),
               borderSide: BorderSide.none),

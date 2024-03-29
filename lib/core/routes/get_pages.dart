@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
+import 'package:global_online/core/bindings/blog_bindings.dart';
 import 'package:global_online/module/auth/view/signup_screen.dart';
+import 'package:global_online/module/blogs/views/blogs_screen.dart';
 import 'package:global_online/module/challenge_details/view/challenge_details_screen.dart';
 import 'package:global_online/module/chat/view/chat_screen.dart';
 import 'package:global_online/module/create_challenges/view/create_challenges_screen.dart';
@@ -64,6 +66,11 @@ class AppPages {
       name: AppRoutes.chat,
       page: () => const ChatScreen(),
       binding: ChatBindings(),
+    ),
+    GetPage(
+      name: AppRoutes.blogs,
+      page: () => const BlogsScreen(),
+      binding: BlogBindings(),
     ),
   ];
 }

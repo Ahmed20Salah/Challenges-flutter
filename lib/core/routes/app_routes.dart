@@ -16,6 +16,7 @@ class AppRoutes {
   static const createMedia = '/create_media';
   static const editProfile = '/edit_profile';
   static const challengeDetails = '/challenge_details';
+  static const blogs = '/blogs';
 
   // static const
 }

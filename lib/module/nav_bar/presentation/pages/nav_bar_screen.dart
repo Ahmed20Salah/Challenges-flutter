@@ -9,6 +9,7 @@ import 'package:global_online/core/resources/resource.dart';
 import 'package:global_online/core/routes/app_routes.dart';
 import 'package:global_online/core/utils/constant.dart';
 import 'package:global_online/core/utils/services/storage.dart';
+import 'package:global_online/module/blogs/views/blogs_screen.dart';
 import 'package:global_online/module/home/view/home_screen.dart';
 
 import '../../../../core/helpers/custom_icon_icons.dart';
@@ -275,6 +276,10 @@ class CustomDrawer extends StatelessWidget {
                       ),
                     ),
                     ListTile(
+                      onTap: () {
+                        logic.toggleDrawer();
+                        Get.toNamed(AppRoutes.blogs);
+                      },
                       leading: SvgPicture.asset(ImageAssets.iconBlog),
                       horizontalTitleGap: 10,
                       title: Text(
