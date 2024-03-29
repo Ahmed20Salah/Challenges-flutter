@@ -26,4 +26,6 @@ class API {
   static const challengeDetails = '/challengeDetails';
   static const challengeResult = '/ChallengeResult';
   static String imageUrl(String path) => '$baseImageUrl$path';
+
+  static const blogs = '/getPosts';
 }
